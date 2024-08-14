@@ -15,7 +15,7 @@ namespace FluentUI_Framework
             InitializeComponent();
 
             Loaded += (s, e) => Theme_Changed();
-            Theme.Changed += Theme_Changed; ;
+            Theme.Changed += Theme_Changed;
 
 
             Test();

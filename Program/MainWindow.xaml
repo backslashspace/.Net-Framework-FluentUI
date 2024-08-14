@@ -22,26 +22,26 @@
         <FluentUI:Button_Primary x:Name="PrimaryButton"
             Content="OK | a zZ"
             Margin="170,0,0,0"
-                                 IsEnabled="False"
+            IsEnabled="True"
             Height="32" Width="153"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
-    
-        <!--
-        
+
+
+
         <FluentUI:Button_Secondary  x:Name="SecondaryButton"
-    Content="Abbrehen"
-    IsEnabled="False"
-    
-    Margin="400,0,0,0"
-    Height="32" Width="153"
-    VerticalAlignment="Center" HorizontalAlignment="Left"
-    />
-      
-        
-        -->
-        
+            Content="Abbrehen"
+            IsEnabled="True"
+            
+            Margin="400,0,0,0"
+            Height="32" Width="153"
+            VerticalAlignment="Center" HorizontalAlignment="Left"
+            />
+
+
+
+
 
 
 

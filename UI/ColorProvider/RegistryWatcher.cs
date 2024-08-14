@@ -9,7 +9,7 @@ namespace FluentUI
         private readonly ManagementEventWatcher _ManagementEventWatcher;
 
         /// <summary>sample keyPath = @"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent";</summary>
-        internal RegistryWatcher(String doubleEscapedPath, String valueName, Action<object, EventArrivedEventArgs> action)
+        internal RegistryWatcher(String doubleEscapedPath, String valueName, Action<Object, EventArrivedEventArgs> action)
         {
             WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
             WqlEventQuery query = new($@"SELECT * FROM RegistryValueChangeEvent WHERE Hive='HKEY_USERS' AND KeyPath='{currentUser.User.Value}\\{doubleEscapedPath}' AND ValueName='{valueName}'");

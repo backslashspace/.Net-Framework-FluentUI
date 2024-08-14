@@ -7,8 +7,6 @@ namespace FluentUI
 {
     internal sealed class SolidColorBrushAnimation : AnimationTimeline
     {
-
-
         public override Type TargetPropertyType => typeof(SolidColorBrush);
 
         public SolidColorBrush From
