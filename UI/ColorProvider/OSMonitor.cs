@@ -61,8 +61,9 @@ namespace FluentUI
                     UI.Dispatcher.Invoke(() =>
                     {
                         AccentColors.CalculateDerivedColors(); // must run on ui thread
-                        AccentColors.GetChangedInvoker()?.Invoke();
-                        UI.GetChangedInvoker()?.Invoke();
+
+                        AccentColors.InvokeChanged();
+                        UI.InvokeColorProviderChanged();
                     });
                 }
             }
@@ -107,12 +108,10 @@ namespace FluentUI
 
                 if (Theme.IsDarkMode != newValue)
                 {
-                    Theme.IsDarkMode = newValue;
-
                     UI.Dispatcher.Invoke(() =>
                     {
-                        Theme.GetChangedInvoker()?.Invoke();
-                        UI.GetChangedInvoker()?.Invoke();
+                        Theme.IsDarkMode = newValue;
+                        UI.InvokeColorProviderChanged();
                     });
                 }
             }

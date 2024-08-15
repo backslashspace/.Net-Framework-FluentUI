@@ -53,7 +53,7 @@ namespace FluentUI
         internal delegate void AccentHandler();
         internal static event AccentHandler Changed;
 
-        internal static AccentHandler GetChangedInvoker() => Changed!;
+        internal static void InvokeChanged() => Changed?.Invoke();
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

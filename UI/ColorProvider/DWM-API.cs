@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace FluentUI
 {
@@ -16,23 +16,51 @@ namespace FluentUI
 
             if (_WindowsBuildNumber >= 18985) // windows 10 '20H1' or newer
             {
-                InternalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
+                _InternalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
                 DarkModeCompatibilityLevel = DWM_Dark_Mode_Compatibility_Level.IMMERSIVE_DARK_MODE;
             }
             else if (_WindowsBuildNumber >= 17763)
             {
-                InternalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763;
+                _InternalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763;
                 DarkModeCompatibilityLevel = DWM_Dark_Mode_Compatibility_Level.IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763;
             }
             else
             {
-                InternalThemeAttribute = 0;
+                _InternalThemeAttribute = 0;
                 DarkModeCompatibilityLevel = DWM_Dark_Mode_Compatibility_Level.NONE;
             }
 
             Initialized = true;
         }
 
+        // # # # # # # # # # # # # # # # # # # # # # # # # 
+
+        internal static Int32 GetWindowsBuildNumber()
+        {
+            if (_WindowsBuildNumber != -1) return _WindowsBuildNumber;
+
+            Object regOutput = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentBuildNumber", null);
+
+            if (regOutput == null)
+            {
+                return -2;
+            }
+
+            if (UInt32.TryParse(unchecked((String)regOutput), out UInt32 version))
+            {
+                _WindowsBuildNumber = checked((Int32)version);
+
+                return _WindowsBuildNumber;
+            }
+
+            return -3;
+        }
+
+        private static IntPtr GetWindowHandle(Window window) => new System.Windows.Interop.WindowInteropHelper(window).Handle;
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # 
+
+        #region State
         internal static DWM_Dark_Mode_Compatibility_Level? DarkModeCompatibilityLevel { get; private set; } = null;
         internal enum DWM_Dark_Mode_Compatibility_Level : Byte
         {
@@ -41,7 +69,7 @@ namespace FluentUI
             IMMERSIVE_DARK_MODE = 2,
         }
 
-        private static DWMWINDOWATTRIBUTE InternalThemeAttribute = 0;
+        private static DWMWINDOWATTRIBUTE _InternalThemeAttribute = 0;
         private enum DWMWINDOWATTRIBUTE : UInt32
         {
             DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763 = 19,
@@ -53,38 +81,83 @@ namespace FluentUI
         }
 
         private static Int32 _WindowsBuildNumber = -1;
+        #endregion
 
-        internal static Int32 GetWindowsBuildNumber()
-        {
-            if (_WindowsBuildNumber != -1) return _WindowsBuildNumber;
-
-            Object regOutput = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentBuildNumber", null);
-
-            if (regOutput == null) throw new InvalidDataException("Registry: return value of 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion', 'CurrentBuildNumber' was null");
-
-            if (UInt32.TryParse(unchecked((String)regOutput), out UInt32 version))
-            {
-                _WindowsBuildNumber = checked((Int32)version);
-
-                return _WindowsBuildNumber;
-            }
-
-            throw new InvalidCastException($"GetWindowsBuildNumber(): {regOutput} -> Int32");
-        }
-
+        #region Call Wrapper
         // requires os version 17763 or later  
-        internal static unsafe Boolean SetTheme(IntPtr hwnd, Boolean dark)
+        internal static unsafe Boolean SetTheme(Window window, Boolean dark)
         {
             if (!Initialized) throw new InvalidOperationException("DWMAPI not initialized.");
+            if (DarkModeCompatibilityLevel == DWM_Dark_Mode_Compatibility_Level.NONE) return false; // not supported
 
-            if (DarkModeCompatibilityLevel == DWM_Dark_Mode_Compatibility_Level.NONE) return false;
+            DwmSetWindowAttribute(GetWindowHandle(window), _InternalThemeAttribute, (UInt32*)&dark, sizeof(UInt32));
 
-            DwmSetWindowAttribute(hwnd, InternalThemeAttribute, ref *(UInt32*)&dark, sizeof(UInt32));
+            if (_WindowsBuildNumber < 22000) UpdateWindow(window);
 
             return true;
         }
 
+        // requires os version 22000 or later  
+        internal static unsafe Boolean SetCaptionColor(Window window, UInt32 COLORREF)
+        {
+            if (!Initialized) throw new InvalidOperationException("DWMAPI not initialized.");
+            if (_WindowsBuildNumber < 22000) return false; // not supported
+
+            DwmSetWindowAttribute(GetWindowHandle(window), DWMWINDOWATTRIBUTE.DWMWA_CAPTION_COLOR, &COLORREF, sizeof(UInt32));
+
+            return true;
+        }
+
+        // requires os version 22000 or later  
+        internal static unsafe Boolean SetBorderColor(Window window, UInt32 COLORREF)
+        {
+            if (!Initialized) throw new InvalidOperationException("DWMAPI not initialized.");
+            if (_WindowsBuildNumber < 22000) return false; // not supported
+
+            DwmSetWindowAttribute(GetWindowHandle(window), DWMWINDOWATTRIBUTE.DWMWA_BORDER_COLOR, &COLORREF, sizeof(UInt32));
+
+            return true;
+        }
+        #endregion
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # 
+
         [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern UInt32 DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, ref UInt32 pvAttribute, UInt32 cbAttribute);
+        private static unsafe extern Int32 DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, UInt32* pvAttribute, UInt32 cbAttribute);
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # 
+
+        #region Windows 10 Window Helper
+        private static void UpdateWindow(Window window)
+        {
+            if (window.WindowStyle != WindowStyle.ToolWindow && window.WindowStyle != WindowStyle.None)
+            {
+                WindowStyle current = window.WindowStyle;
+
+                window.WindowStyle = current switch
+                {
+                    WindowStyle.SingleBorderWindow => WindowStyle.ThreeDBorderWindow,
+                    WindowStyle.ThreeDBorderWindow => WindowStyle.SingleBorderWindow,
+                    WindowStyle.ToolWindow => WindowStyle.SingleBorderWindow,
+                    _ => current,
+                };
+
+                window.WindowStyle = current;
+            }
+            else
+            {
+                ResizeMode current = window.ResizeMode;
+
+                window.ResizeMode = current switch
+                {
+                    ResizeMode.CanResize => ResizeMode.CanMinimize,
+                    ResizeMode.NoResize => ResizeMode.CanMinimize,
+                    _ => ResizeMode.CanResize
+                };
+
+                window.ResizeMode = current;
+            }
+        } 
+        #endregion
     }
 }

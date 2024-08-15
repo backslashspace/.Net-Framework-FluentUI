@@ -13,6 +13,8 @@ namespace FluentUI
         internal static Boolean IsInitialized { get; private set; }
         internal static Dispatcher Dispatcher { get; private set; }
 
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
         internal static void Initialize(Dispatcher dispatcher)
         {
             if (IsInitialized) return;
@@ -27,10 +29,12 @@ namespace FluentUI
             IsInitialized = true;
         }
 
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
         internal delegate void ColorProviderUpdatedHandler();
         internal static event ColorProviderUpdatedHandler ColorProviderChanged;
 
-        internal static ColorProviderUpdatedHandler GetChangedInvoker() => ColorProviderChanged;
+        internal static void InvokeColorProviderChanged() => ColorProviderChanged?.Invoke();
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

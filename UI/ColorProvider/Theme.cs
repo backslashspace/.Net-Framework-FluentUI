@@ -8,66 +8,41 @@ namespace FluentUI
 {
     internal static class Theme
     {
-        internal static Boolean IsDarkMode = false;
+        private static Boolean _IsDarkMode = false;
+        internal static Boolean IsDarkMode
+        {
+            get => _IsDarkMode;
+            set
+            {
+                _IsDarkMode = value;
+                Changed?.Invoke();
+            }
+        } // update must run on UI thread
 
-        // # # # # # # # # # # # # # # # # # # # # # # # # # #
-        
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
         internal delegate void ThemeHandler();
         internal static event ThemeHandler Changed;
-        internal static ThemeHandler GetChangedInvoker() => Changed!;
 
-        // # # # # # # # # # # # # # # # # # # # # # # # # # #
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-        internal static void SetNonClientArea(Object sender, RoutedEventArgs e)
+        internal static void SetNonClientArea(Object sender, RoutedEventArgs e) => SetWindowAttributes((Window)sender);
+
+        internal static void UpdateNonClientArea(Window sender) => SetWindowAttributes(sender);
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+        private static void SetWindowAttributes(Window targetWindow)
         {
-            DWMAPI.SetTheme(new System.Windows.Interop.WindowInteropHelper((Window)sender).Handle, IsDarkMode);
+            DWMAPI.SetTheme(targetWindow, IsDarkMode);
 
-            if (DWMAPI.GetWindowsBuildNumber() < 22000)
+            if (IsDarkMode)
             {
-                UpdateWindow((Window)sender);
-            }
-        }
-
-        internal static void UpdateNonClientArea(Window sender)
-        {
-            DWMAPI.SetTheme(new System.Windows.Interop.WindowInteropHelper(sender).Handle, IsDarkMode);
-
-            if (DWMAPI.GetWindowsBuildNumber() < 22000)
-            {
-                UpdateWindow(sender);
-            }
-        }
-
-        // # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-        private static void UpdateWindow(Window window)
-        {
-            if (window.WindowStyle != WindowStyle.ToolWindow && window.WindowStyle != WindowStyle.None)
-            {
-                WindowStyle current = window.WindowStyle;
-
-                window.WindowStyle = current switch
-                {
-                    WindowStyle.SingleBorderWindow => WindowStyle.ThreeDBorderWindow,
-                    WindowStyle.ThreeDBorderWindow => WindowStyle.SingleBorderWindow,
-                    WindowStyle.ToolWindow => WindowStyle.SingleBorderWindow,
-                    _ => current,
-                };
-
-                window.WindowStyle = current;
+                DWMAPI.SetCaptionColor(targetWindow, 2105376u); // = rgb 32, 32, 32
             }
             else
             {
-                ResizeMode current = window.ResizeMode;
-
-                window.ResizeMode = current switch
-                {
-                    ResizeMode.CanResize => ResizeMode.CanMinimize,
-                    ResizeMode.NoResize => ResizeMode.CanMinimize,
-                    _ => ResizeMode.CanResize
-                };
-
-                window.ResizeMode = current;
+                DWMAPI.SetCaptionColor(targetWindow, 15987699u); // = rgb 243, 243, 243
             }
         }
     }
