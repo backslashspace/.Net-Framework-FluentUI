@@ -15,7 +15,9 @@ namespace FluentUI
             set
             {
                 _IsDarkMode = value;
+
                 Changed?.Invoke();
+                UI.InvokeColorProviderChanged();
             }
         } // update must run on UI thread
 

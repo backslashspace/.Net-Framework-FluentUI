@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management;
 using System.Security.Principal;
 
@@ -6,7 +7,9 @@ namespace FluentUI
 {
     internal sealed class RegistryWatcher
     {
-        private readonly ManagementEventWatcher _ManagementEventWatcher;
+        internal readonly Boolean SuccessfullySubscribed = false;
+
+        private static readonly List<ManagementEventWatcher> _ManagementEventWatchers = new(2);
 
         /// <summary>sample keyPath = @"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent";</summary>
         internal RegistryWatcher(String doubleEscapedPath, String valueName, Action<Object, EventArrivedEventArgs> action)
@@ -14,16 +17,30 @@ namespace FluentUI
             WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
             WqlEventQuery query = new($@"SELECT * FROM RegistryValueChangeEvent WHERE Hive='HKEY_USERS' AND KeyPath='{currentUser.User.Value}\\{doubleEscapedPath}' AND ValueName='{valueName}'");
 
-            _ManagementEventWatcher = new(query);
+            ManagementEventWatcher managementEventWatcher = new(query);
 
-            _ManagementEventWatcher.EventArrived += action.Invoke;
-            _ManagementEventWatcher.Start();
+            try
+            {
+                managementEventWatcher.Start(); // will fail when WMI quota was reached
+                managementEventWatcher.EventArrived += action.Invoke;
+
+                _ManagementEventWatchers.Add(managementEventWatcher);
+
+                SuccessfullySubscribed = true;
+            }
+            catch
+            {
+                managementEventWatcher.Dispose();
+            }
         }
 
-        ~RegistryWatcher()
+        internal static void Dispose()
         {
-            _ManagementEventWatcher.Stop();
-            _ManagementEventWatcher.Dispose();
+            for (UInt16 i = 0; i < _ManagementEventWatchers.Count; ++i)
+            {
+                _ManagementEventWatchers[i]?.Stop(); // free unmanaged resources
+                _ManagementEventWatchers[i]?.Dispose();
+            }
         }
     }
 }

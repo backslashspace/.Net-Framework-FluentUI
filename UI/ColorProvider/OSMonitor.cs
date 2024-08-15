@@ -23,14 +23,16 @@ namespace FluentUI
         }
 
         #region AccentColor
-        private static RegistryWatcher _RegistryWatcherWatcher;
+        private static RegistryWatcher _RegistryAccentWatcher;
         private static void StartAccentColorWatcher()
         {
             if (DWMAPI.GetWindowsBuildNumber() <= 9600) return;
 
             UpdateAccentColor(null, null);
 
-            _RegistryWatcherWatcher = new RegistryWatcher(@"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent", "AccentPalette", UpdateAccentColor);
+            _RegistryAccentWatcher = new RegistryWatcher(@"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent", "AccentPalette", UpdateAccentColor);
+
+            // todo: if (!_RegistryAccentWatcher.SuccessfullySubscribed) ShowWMIERROR
         }
 
         private static void UpdateAccentColor(Object sender, EventArrivedEventArgs e)
@@ -72,14 +74,16 @@ namespace FluentUI
         #endregion
 
         #region Theme
-        private static RegistryWatcher _ThemeWatcher;
+        private static RegistryWatcher _RegistryThemeWatcher;
         private static void StartThemeWatcher()
         {
             if (DWMAPI.DarkModeCompatibilityLevel == DWMAPI.DWM_Dark_Mode_Compatibility_Level.NONE) return;
 
             UpdateTheme(null, null);
 
-            _ThemeWatcher = new RegistryWatcher(@"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", UpdateTheme);
+            _RegistryThemeWatcher = new RegistryWatcher(@"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", UpdateTheme);
+
+            // todo: if (!_RegistryThemeWatcher.SuccessfullySubscribed) ShowWMIERROR
         }
 
         private static void UpdateTheme(Object sender, EventArrivedEventArgs e)

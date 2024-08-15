@@ -19,6 +19,8 @@ namespace FluentUI_Framework
                 app.Run();
             }
             catch { }
+
+            FluentUI.RegistryWatcher.Dispose();
         }
     }
 }
