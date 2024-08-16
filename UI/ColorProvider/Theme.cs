@@ -8,13 +8,13 @@ namespace FluentUI
 {
     internal static class Theme
     {
-        private static Boolean _IsDarkMode = false;
+        private static Boolean _isDarkMode = false;
         internal static Boolean IsDarkMode
         {
-            get => _IsDarkMode;
+            get => _isDarkMode;
             set
             {
-                _IsDarkMode = value;
+                _isDarkMode = value;
 
                 Changed?.Invoke();
                 UI.InvokeColorProviderChanged();

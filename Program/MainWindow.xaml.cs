@@ -45,5 +45,15 @@ namespace FluentUI_Framework
 
             Background = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0x20, 0x20, 0x20)) : new SolidColorBrush(Color.FromRgb(0xf3, 0xf3, 0xf3));
         }
+
+        private void PrimaryButton_Click(Button_Primary sender)
+        {
+            Debug.WriteLine("Primary");
+        }
+
+        private void SecondaryButton_Click(Button_Secondary sender)
+        {
+            Debug.WriteLine("Secondary");
+        }
     }
 }

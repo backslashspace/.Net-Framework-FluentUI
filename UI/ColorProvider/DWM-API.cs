@@ -14,19 +14,19 @@ namespace FluentUI
 
             GetWindowsBuildNumber();
 
-            if (_WindowsBuildNumber >= 18985) // windows 10 '20H1' or newer
+            if (_windowsBuildNumber >= 18985) // windows 10 '20H1' or newer
             {
-                _InternalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
+                _internalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
                 DarkModeCompatibilityLevel = DWM_Dark_Mode_Compatibility_Level.IMMERSIVE_DARK_MODE;
             }
-            else if (_WindowsBuildNumber >= 17763)
+            else if (_windowsBuildNumber >= 17763)
             {
-                _InternalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763;
+                _internalThemeAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763;
                 DarkModeCompatibilityLevel = DWM_Dark_Mode_Compatibility_Level.IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763;
             }
             else
             {
-                _InternalThemeAttribute = 0;
+                _internalThemeAttribute = 0;
                 DarkModeCompatibilityLevel = DWM_Dark_Mode_Compatibility_Level.NONE;
             }
 
@@ -37,7 +37,7 @@ namespace FluentUI
 
         internal static Int32 GetWindowsBuildNumber()
         {
-            if (_WindowsBuildNumber != -1) return _WindowsBuildNumber;
+            if (_windowsBuildNumber != -1) return _windowsBuildNumber;
 
             Object regOutput = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentBuildNumber", null);
 
@@ -48,9 +48,9 @@ namespace FluentUI
 
             if (UInt32.TryParse(unchecked((String)regOutput), out UInt32 version))
             {
-                _WindowsBuildNumber = checked((Int32)version);
+                _windowsBuildNumber = checked((Int32)version);
 
-                return _WindowsBuildNumber;
+                return _windowsBuildNumber;
             }
 
             return -3;
@@ -69,7 +69,7 @@ namespace FluentUI
             IMMERSIVE_DARK_MODE = 2,
         }
 
-        private static DWMWINDOWATTRIBUTE _InternalThemeAttribute = 0;
+        private static DWMWINDOWATTRIBUTE _internalThemeAttribute = 0;
         private enum DWMWINDOWATTRIBUTE : UInt32
         {
             DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_18985_EQUAL_OR_AFTER_17763 = 19,
@@ -80,7 +80,7 @@ namespace FluentUI
             DWMWA_TEXT_COLOR = 36
         }
 
-        private static Int32 _WindowsBuildNumber = -1;
+        private static Int32 _windowsBuildNumber = -1;
         #endregion
 
         #region Call Wrapper
@@ -90,9 +90,9 @@ namespace FluentUI
             if (!Initialized) throw new InvalidOperationException("DWMAPI not initialized.");
             if (DarkModeCompatibilityLevel == DWM_Dark_Mode_Compatibility_Level.NONE) return false; // not supported
 
-            DwmSetWindowAttribute(GetWindowHandle(window), _InternalThemeAttribute, (UInt32*)&dark, sizeof(UInt32));
+            DwmSetWindowAttribute(GetWindowHandle(window), _internalThemeAttribute, (UInt32*)&dark, sizeof(UInt32));
 
-            if (_WindowsBuildNumber < 22000) UpdateWindow(window);
+            if (_windowsBuildNumber < 22000) UpdateWindow(window);
 
             return true;
         }
@@ -101,7 +101,7 @@ namespace FluentUI
         internal static unsafe Boolean SetCaptionColor(Window window, UInt32 COLORREF)
         {
             if (!Initialized) throw new InvalidOperationException("DWMAPI not initialized.");
-            if (_WindowsBuildNumber < 22000) return false; // not supported
+            if (_windowsBuildNumber < 22000) return false; // not supported
 
             DwmSetWindowAttribute(GetWindowHandle(window), DWMWINDOWATTRIBUTE.DWMWA_CAPTION_COLOR, &COLORREF, sizeof(UInt32));
 
@@ -112,7 +112,7 @@ namespace FluentUI
         internal static unsafe Boolean SetBorderColor(Window window, UInt32 COLORREF)
         {
             if (!Initialized) throw new InvalidOperationException("DWMAPI not initialized.");
-            if (_WindowsBuildNumber < 22000) return false; // not supported
+            if (_windowsBuildNumber < 22000) return false; // not supported
 
             DwmSetWindowAttribute(GetWindowHandle(window), DWMWINDOWATTRIBUTE.DWMWA_BORDER_COLOR, &COLORREF, sizeof(UInt32));
 

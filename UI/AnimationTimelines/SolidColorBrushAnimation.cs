@@ -37,10 +37,10 @@ namespace FluentUI
             Double currentProgress = animationClock.CurrentProgress.GetValueOrDefault();
             Double currentProgress_Inverted = (currentProgress - 1) * -1;
 
-            Byte alpha = (Byte)((From.Color.A > To.Color.A ? ((From.Color.A - To.Color.A) * currentProgress_Inverted) + To.Color.A : ((To.Color.A - From.Color.A) * currentProgress) + From.Color.A) + MAGIC_NUMBER - MAGIC_NUMBER);
-            Byte red = (Byte)((From.Color.R > To.Color.R ? ((From.Color.R - To.Color.R) * currentProgress_Inverted) + To.Color.R : ((To.Color.R - From.Color.R) * currentProgress) + From.Color.R) + MAGIC_NUMBER - MAGIC_NUMBER);
-            Byte green = (Byte)((From.Color.G > To.Color.G ? ((From.Color.G - To.Color.G) * currentProgress_Inverted) + To.Color.G : ((To.Color.G - From.Color.G) * currentProgress) + From.Color.G) + MAGIC_NUMBER - MAGIC_NUMBER);
-            Byte blue = (Byte)((From.Color.B > To.Color.B ? ((From.Color.B - To.Color.B) * currentProgress_Inverted) + To.Color.B : ((To.Color.B - From.Color.B) * currentProgress) + From.Color.B) + MAGIC_NUMBER - MAGIC_NUMBER);
+            Byte alpha  = (Byte)((From.Color.A > To.Color.A ? ((From.Color.A - To.Color.A) * currentProgress_Inverted) + To.Color.A : ((To.Color.A - From.Color.A) * currentProgress) + From.Color.A) + MAGIC_NUMBER - MAGIC_NUMBER);
+            Byte red    = (Byte)((From.Color.R > To.Color.R ? ((From.Color.R - To.Color.R) * currentProgress_Inverted) + To.Color.R : ((To.Color.R - From.Color.R) * currentProgress) + From.Color.R) + MAGIC_NUMBER - MAGIC_NUMBER);
+            Byte green  = (Byte)((From.Color.G > To.Color.G ? ((From.Color.G - To.Color.G) * currentProgress_Inverted) + To.Color.G : ((To.Color.G - From.Color.G) * currentProgress) + From.Color.G) + MAGIC_NUMBER - MAGIC_NUMBER);
+            Byte blue   = (Byte)((From.Color.B > To.Color.B ? ((From.Color.B - To.Color.B) * currentProgress_Inverted) + To.Color.B : ((To.Color.B - From.Color.B) * currentProgress) + From.Color.B) + MAGIC_NUMBER - MAGIC_NUMBER);
 
             return new SolidColorBrush(Color.FromArgb(alpha, red, green, blue));
         }

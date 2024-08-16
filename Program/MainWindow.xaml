@@ -13,7 +13,16 @@
         >
     
     <Window.Resources>
-        
+        <!--#region Buttons -->
+        <Style x:Key="Button_FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border BorderBrush="#ffffff" BorderThickness="2" CornerRadius="7" Margin="-3" SnapsToDevicePixels="True"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -22,6 +31,7 @@
         <FluentUI:Button_Primary x:Name="PrimaryButton"
             Content="OK | a zZ"
             Margin="170,0,0,0"
+            Click="PrimaryButton_Click"
             IsEnabled="True"
             Height="32" Width="153"
             VerticalAlignment="Center" HorizontalAlignment="Left"
@@ -30,15 +40,14 @@
 
 
 
-        <FluentUI:Button_Secondary  x:Name="SecondaryButton"
+        <FluentUI:Button_Secondary x:Name="SecondaryButton"
             Content="Abbrehen"
             IsEnabled="True"
-            
+            Click="SecondaryButton_Click"
             Margin="400,0,0,0"
             Height="32" Width="153"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
-
 
 
 
