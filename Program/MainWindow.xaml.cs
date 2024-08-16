@@ -42,8 +42,6 @@ namespace FluentUI_Framework
         private void Theme_Changed()
         {
             Theme.UpdateNonClientArea(this);
-
-            Background = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0x20, 0x20, 0x20)) : new SolidColorBrush(Color.FromRgb(0xf3, 0xf3, 0xf3));
         }
 
         private void PrimaryButton_Click(Button_Primary sender)

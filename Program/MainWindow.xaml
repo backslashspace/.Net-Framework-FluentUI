@@ -13,23 +13,13 @@
         >
     
     <Window.Resources>
-        <!--#region Buttons -->
-        <Style x:Key="Button_FocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border BorderBrush="#ffffff" BorderThickness="2" CornerRadius="7" Margin="-3" SnapsToDevicePixels="True"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
     </Window.Resources>
 
-    <Grid>
-
+    <FluentUI:Grid_WindowBackground>
 
         <FluentUI:Button_Primary x:Name="PrimaryButton"
-            Content="OK | a zZ"
+            Content="Start Progress"
             Margin="170,0,0,0"
             Click="PrimaryButton_Click"
             IsEnabled="True"
@@ -37,11 +27,8 @@
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
-
-
-
         <FluentUI:Button_Secondary x:Name="SecondaryButton"
-            Content="Abbrehen"
+            Content="Stop Progress"
             IsEnabled="True"
             Click="SecondaryButton_Click"
             Margin="400,0,0,0"
@@ -50,9 +37,11 @@
             />
 
 
+        <FluentUI:ProgressBar
+            
+            />
 
 
 
-
-    </Grid>
+    </FluentUI:Grid_WindowBackground>
 </Window>
