@@ -1,4 +1,5 @@
 ﻿using FluentUI;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,26 +18,6 @@ namespace FluentUI_Framework
             Loaded += (s, e) => Theme_Changed();
             Theme.Changed += Theme_Changed;
 
-
-            Test();
-        }
-
-        private async Task Test()
-        {
-            while (true)
-            {
-                await Task.Delay(2000).ConfigureAwait(true);
-
-                PrimaryButton.IsEnabled = false;
-
-                SecondaryButton.IsEnabled = false;
-
-                await Task.Delay(2000).ConfigureAwait(true);
-
-                PrimaryButton.IsEnabled = true;
-
-                SecondaryButton.IsEnabled = true;
-            }
         }
 
         private void Theme_Changed()
@@ -44,14 +25,20 @@ namespace FluentUI_Framework
             Theme.UpdateNonClientArea(this);
         }
 
-        private void PrimaryButton_Click(Button_Primary sender)
+        // ############################################################################
+
+        private void PrimaryButton_Click()
         {
-            Debug.WriteLine("Primary");
+            RareBar.IsIndeterminate = RareBar.IsIndeterminate ? false : true;
         }
 
-        private void SecondaryButton_Click(Button_Secondary sender)
+        private void SecondaryButton_Click()
         {
-            Debug.WriteLine("Secondary");
+            if (Double.TryParse(YEEz.Text, out Double eee))
+            {
+                RareBar.Value = eee;
+            }
+            
         }
     }
 }

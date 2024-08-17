@@ -54,15 +54,17 @@ namespace FluentUI
         {
             _this = this;
             UseLayoutRounding = true;
-            CornerRadius = new(5);
+            CornerRadius = new(5d);
             Focusable = true;
+            Height = 32d;
+            Width = 152d;
             Child = _innerBorder;
 
-            _innerBorder.Margin = new(1);
-            _innerBorder.CornerRadius = new(4);
+            _innerBorder.Margin = new(1d);
+            _innerBorder.CornerRadius = new(4d);
             _innerBorder.Child = _textBlock;
 
-            _textBlock.FontSize = 14;
+            _textBlock.FontSize = 14d;
             _textBlock.FontFamily = Fonts.Inter;
             _textBlock.Foreground = Brushes.Black;
             _textBlock.HorizontalAlignment = HorizontalAlignment.Center;
@@ -72,11 +74,18 @@ namespace FluentUI
             _textBlock.SetValue(RenderOptions.ClearTypeHintProperty, ClearTypeHint.Enabled);
             _textBlock.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
 
-            Loaded += (s, e) =>
+            if (Theme.IsDarkMode)
             {
-                _isEnabled = _this.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
-                ColorProviderChanged();
-            };
+                Background = AccentColors.DarkMode.BorderColorAsBrush;
+                _innerBorder.Background = AccentColors.DarkMode.PrimaryColorAsBrush;
+                _textBlock.Foreground = Brushes.Black;
+            }
+            else
+            {
+                Background = AccentColors.LightMode.BorderColorAsBrush;
+                _innerBorder.Background = AccentColors.LightMode.PrimaryColorAsBrush;
+                _textBlock.Foreground = Brushes.White;
+            }
 
             MouseEnter += MouseEnterHandler;
             PreviewMouseDown += PreviewMouseDownHandler;
@@ -84,6 +93,12 @@ namespace FluentUI
             MouseLeave += MouseLeaveHandler;
 
             UI.ColorProviderChanged += ColorProviderChanged;
+
+            Loaded += (s, e) =>
+            {
+                _isEnabled = _this.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
+                ColorProviderChanged();
+            };
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -263,12 +278,6 @@ namespace FluentUI
             {
                 focusVisual_FrameworkElementFactory.SetValue(BorderBrushProperty, Brushes.White);
 
-                Background = AccentColors.DarkMode.BorderColorAsBrush;
-                _innerBorder.Background = AccentColors.DarkMode.PrimaryColorAsBrush;
-                _textBlock.Foreground = Brushes.Black;
-
-                //
-
                 _idle_Font_Animation.To = Brushes.Black;
                 _idle_Border_Animation.To = AccentColors.DarkMode.BorderColorAsBrush;
                 _idle_Background_Animation.To = AccentColors.DarkMode.PrimaryColorAsBrush;
@@ -287,12 +296,6 @@ namespace FluentUI
             else
             {
                 focusVisual_FrameworkElementFactory.SetValue(BorderBrushProperty, _lightMode_FocusVisual);
-
-                Background = AccentColors.LightMode.BorderColorAsBrush;
-                _innerBorder.Background = AccentColors.LightMode.PrimaryColorAsBrush;
-                _textBlock.Foreground = Brushes.White;
-
-                //
 
                 _idle_Font_Animation.To = Brushes.White;
                 _idle_Border_Animation.To = AccentColors.LightMode.BorderColorAsBrush;

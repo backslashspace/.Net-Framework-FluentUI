@@ -11,37 +11,42 @@
         Title="MainWindow"
         Height="450" Width="800"
         >
-    
+
     <Window.Resources>
-        
+
     </Window.Resources>
 
     <FluentUI:Grid_WindowBackground>
 
+        <TextBox x:Name="YEEz"
+            Margin="278,102,348,284"
+            />
+
+
         <FluentUI:Button_Primary x:Name="PrimaryButton"
             Content="Start Progress"
-            Margin="170,0,0,0"
-            Click="PrimaryButton_Click"
+            Margin="400,0,0,0"
+            PreviewClick="PrimaryButton_Click"
             IsEnabled="True"
-            Height="32" Width="153"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
         <FluentUI:Button_Secondary x:Name="SecondaryButton"
             Content="Stop Progress"
             IsEnabled="True"
-            Click="SecondaryButton_Click"
-            Margin="400,0,0,0"
-            Height="32" Width="153"
+            PreviewClick="SecondaryButton_Click"
+            Margin="170,0,0,0"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
 
-        <FluentUI:ProgressBar
-            
+        <FluentUI:ProgressBar x:Name="RareBar"
+            Value="44"
+            IsIndeterminate="True"
+            Margin="102,321,0,0"
+            VerticalAlignment="Top" HorizontalAlignment="Left"
+            Width="550"
             />
-
-
 
     </FluentUI:Grid_WindowBackground>
 </Window>

@@ -76,7 +76,7 @@
     <Compile Include="UI\ColorProvider\RegistryWatcher.cs" />
     <Compile Include="UI\ColorProvider\Theme.cs" />
     <Compile Include="UI\Controls\Grid_WindowBackground.cs" />
-    <Compile Include="UI\Controls\Progressbar.cs" />
+    <Compile Include="UI\Controls\ProgressBar.cs" />
     <Compile Include="UI\Initialize.cs" />
     <Compile Include="UI\resources\fonts\FontReferences.cs" />
     <Page Include="Program\MainWindow.xaml">

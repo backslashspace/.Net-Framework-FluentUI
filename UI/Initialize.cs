@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -35,6 +36,9 @@ namespace FluentUI
         internal static event ColorProviderUpdatedHandler ColorProviderChanged;
 
         internal static void InvokeColorProviderChanged() => ColorProviderChanged?.Invoke();
+
+        internal static readonly Duration ShortAnimationDuration = new(new(0, 0, 0, 0, 24));
+        internal static readonly Duration LongAnimationDuration = new(new(0, 0, 0, 0, 48));
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
