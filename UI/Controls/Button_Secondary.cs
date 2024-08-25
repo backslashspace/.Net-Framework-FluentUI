@@ -43,7 +43,7 @@ namespace FluentUI
 
         private readonly Border _this;
         private readonly Border _innerBorder = new();
-        private readonly TextBlock _textBlock = new();
+        private readonly TextBlock _textBlock = new(false);
 
         internal delegate void ClickHandler(Button_Secondary sender);
         internal event ClickHandler Click;
@@ -64,15 +64,9 @@ namespace FluentUI
             _innerBorder.CornerRadius = new(4d);
             _innerBorder.Child = _textBlock;
 
-            _textBlock.FontSize = 14d;
-            _textBlock.FontFamily = Fonts.Inter;
             _textBlock.FontWeight = FontWeights.Medium;
             _textBlock.HorizontalAlignment = HorizontalAlignment.Center;
             _textBlock.VerticalAlignment = VerticalAlignment.Center;
-            _textBlock.SetValue(TextOptions.TextRenderingModeProperty, TextRenderingMode.Grayscale);
-            _textBlock.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.HighQuality);
-            _textBlock.SetValue(RenderOptions.ClearTypeHintProperty, ClearTypeHint.Enabled);
-            _textBlock.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
 
             if (Theme.IsDarkMode)
             {
@@ -185,10 +179,7 @@ namespace FluentUI
             _innerBorder.BeginAnimation(BackgroundProperty, _mouseOver_Background_Animation);
         }
 
-        private void PreviewMouseDownHandler(Object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            BeginButtonDownAnimation();
-        }
+        private void PreviewMouseDownHandler(Object sender, System.Windows.Input.MouseButtonEventArgs e) => BeginButtonDownAnimation();
 
         private void PreviewMouseUpHandler(Object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

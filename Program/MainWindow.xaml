@@ -48,5 +48,13 @@
             Width="550"
             />
 
+        <FluentUI:CheckBox Margin="587,378,193,36"
+            />
+
+        <FluentUI:TextBlock
+            Text="Test"
+            UseGrayScaleRender="False"
+            Margin="523,126,67,267"/>
+
     </FluentUI:Grid_WindowBackground>
 </Window>

@@ -82,7 +82,7 @@ namespace FluentUI
                 Background = _lightMode_Background;
             }
 
-            UI.ColorProviderChanged += UI_ColorProviderChanged;
+            UI.ColorProviderChanged += ColorProviderChanged;
 
             Loaded += (s, e) =>
             {
@@ -98,7 +98,7 @@ namespace FluentUI
         }
 
         #region Animations
-        private static DoubleAnimation _indicatorAnimation = new()
+        private static readonly DoubleAnimation _indicatorAnimation = new()
         {
             Duration = new(new(0, 0, 0, 0, 320)),
             DecelerationRatio = 1,
@@ -148,7 +148,7 @@ namespace FluentUI
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-        private void UI_ColorProviderChanged()
+        private void ColorProviderChanged()
         {
             _foregroundAnimation.From = (SolidColorBrush)_indicator.Background;
             _backgroundAnimation.From = (SolidColorBrush)Background;

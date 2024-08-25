@@ -52,7 +52,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -75,8 +74,10 @@
     <Compile Include="UI\ColorProvider\OSMonitor.cs" />
     <Compile Include="UI\ColorProvider\RegistryWatcher.cs" />
     <Compile Include="UI\ColorProvider\Theme.cs" />
+    <Compile Include="UI\Controls\CheckBox.cs" />
     <Compile Include="UI\Controls\Grid_WindowBackground.cs" />
     <Compile Include="UI\Controls\ProgressBar.cs" />
+    <Compile Include="UI\Controls\TextBlock.cs" />
     <Compile Include="UI\Initialize.cs" />
     <Compile Include="UI\resources\fonts\FontReferences.cs" />
     <Page Include="Program\MainWindow.xaml">
@@ -133,6 +134,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="README.MD" />
     <None Include="UI\resources\fonts\LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
