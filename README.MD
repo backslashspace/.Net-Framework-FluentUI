@@ -21,7 +21,7 @@ its in progress, but what the title says
 - tried to avoid allocations as much as possible
 - yes Int32 not int
 
-as of now it uses unsafe for some stuff, shouldn't be hard use it without unsafe though (used to cast a Boolean to a UInt32 in DWM api wrapper)
+as of now it uses unsafe for some stuff, shouldn't be too hard to use it without unsafe though (used to cast a Boolean to a UInt32 in DWM api wrapper)
 
 ## getting started
 
