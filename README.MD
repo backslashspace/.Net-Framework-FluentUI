@@ -13,6 +13,7 @@ its in progress, but what the title says
 - not a good readme.md yet
 - easy to use
 - design time preview
+- all controls are defined in code behind (no xaml just c#)
 - design time dark and light mode (only need to change one value to switch (FluentUI.Theme.IsDarkMode)) 
 - automatic theme and accent color change on registry update (for example when theme or color was changed in settings app)
 - very very close to the original (1:1 is goal)

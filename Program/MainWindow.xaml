@@ -35,11 +35,9 @@
             Content="Stop Progress"
             IsEnabled="True"
             PreviewClick="SecondaryButton_Click"
-            Margin="170,0,0,0"
+            Margin="149,0,0,0"
             VerticalAlignment="Center" HorizontalAlignment="Left"
-            >
-
-        </FluentUI:Button_Secondary>
+            />
 
 
         <FluentUI:ProgressBar x:Name="RareBar"
@@ -50,7 +48,7 @@
             Width="550"
             />
 
-
+        <FluentUI:Checkbox Margin="500,266,172,148" Content="Test"/>
 
         <FluentUI:TextBlock
             Text="Test"
@@ -59,13 +57,11 @@
             Margin="523,126,67,267"/>
 
         <FluentUI:Checkbox
-            Content="TestText"
+            Content="|Dgß"
             IsChecked="True"
             IsEnabled="True"
-            Margin="0,0,106,36" HorizontalAlignment="Right" Width="107" Height="20" VerticalAlignment="Bottom"
+            Margin="0,0,136,36" HorizontalAlignment="Right" Width="77" Height="20" VerticalAlignment="Bottom"
             />
-
-
 
     </FluentUI:Grid_WindowBackground>
 </Window>
