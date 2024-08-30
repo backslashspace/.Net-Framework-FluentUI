@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 #pragma warning disable IDE0079
@@ -14,6 +15,20 @@ namespace FluentUI
         internal static Boolean IsInitialized { get; private set; }
         internal static Dispatcher Dispatcher { get; private set; }
 
+        private static Int32? _desiredAnimationFrameRate = null;
+        /// <summary><see langword="null"/> == Controlled by System (default)</summary>
+        internal static Int32? DesiredAnimationFrameRate
+        {
+            get => _desiredAnimationFrameRate;
+            set
+            {
+                if (value == _desiredAnimationFrameRate) return;
+
+                _desiredAnimationFrameRate = value;
+                Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(defaultValue: value));
+            }
+        }
+
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         internal static void Initialize(Dispatcher dispatcher)
@@ -21,8 +36,8 @@ namespace FluentUI
             if (IsInitialized) return;
 
             Dispatcher = dispatcher;
-
-            ExplicitLoadFontReferences();
+            
+            LoadFontReferencesExplicit();
 
             DWMAPI.Initialize();
             OSMonitor.Initialize();
@@ -42,7 +57,7 @@ namespace FluentUI
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-        private static void ExplicitLoadFontReferences()
+        private static void LoadFontReferencesExplicit()
         {
             UInt16 fontCounter = 0;
 
