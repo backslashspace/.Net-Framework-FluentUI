@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 #pragma warning disable IDE0079
 #pragma warning disable CS8618
@@ -44,7 +45,6 @@ namespace FluentUI
         new internal Boolean IsInitialized { get; private set; } = false;
 
         #region Definitions
-        private readonly Border _this;
         private readonly Border _buttonBackground = new();
         private readonly TextBlock _textBlock = new(false);
 
@@ -56,7 +56,6 @@ namespace FluentUI
 
         public Button_Primary()
         {
-            _this = this;
             UseLayoutRounding = true;
             CornerRadius = new(5d);
             Focusable = true;
@@ -83,7 +82,7 @@ namespace FluentUI
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
-            _isEnabled = _this.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
+            _isEnabled = base.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
 
             if (_isEnabled)
             {
@@ -260,7 +259,7 @@ namespace FluentUI
         private void Disable()
         {
             MouseLeave -= MouseLeaveHandler;
-            _this.IsEnabled = false;
+            base.IsEnabled = false;
 
             //
 
@@ -293,7 +292,7 @@ namespace FluentUI
 
             //
 
-            _this.IsEnabled = true;
+            base.IsEnabled = true;
             MouseLeave += MouseLeaveHandler;
         }
         #endregion

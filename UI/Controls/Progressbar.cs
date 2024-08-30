@@ -62,13 +62,11 @@ namespace FluentUI
 
         public ProgressBar()
         {
-            Height = 1d;
-            CornerRadius = new(0.5d);
+            Height = 1;
             UseLayoutRounding = true;
             Child = _indicator;
 
             _indicator.Margin = new(-1d);
-            _indicator.CornerRadius = new(1.5d);
             _indicator.HorizontalAlignment = HorizontalAlignment.Left;
 
             if (Theme.IsDarkMode)
@@ -86,6 +84,9 @@ namespace FluentUI
 
             Loaded += (s, e) =>
             {
+                CornerRadius = new(Height * 0.5d);
+                _indicator.CornerRadius = new((Height * 0.5d) + 1);
+
                 if (_isIndeterminate)
                 {
                     StartIndeterminateAnimation();

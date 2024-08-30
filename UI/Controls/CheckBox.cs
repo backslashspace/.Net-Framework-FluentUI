@@ -65,7 +65,6 @@ namespace FluentUI
         new internal Boolean IsInitialized { get; private set; } = false;
 
         #region Definitions
-        private readonly Grid _this;
         private readonly Border _checkboxBorder = new();
         private readonly Border _checkboxBackground = new();
         private readonly Path _optionMark = new();
@@ -79,7 +78,6 @@ namespace FluentUI
 
         public Checkbox()
         {
-            _this = this;
             Height = 20d;
             Width = 128d;
             UseLayoutRounding = true;
@@ -118,7 +116,7 @@ namespace FluentUI
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
-            _isEnabled = _this.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
+            _isEnabled = base.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
 
             if (_isEnabled)
             {
@@ -292,7 +290,7 @@ namespace FluentUI
         private void Disable()
         {
             MouseLeave -= MouseLeaveHandler;
-            _this.IsEnabled = false;
+            base.IsEnabled = false;
 
             //
 
@@ -323,7 +321,7 @@ namespace FluentUI
             _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
             _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
 
-            _this.IsEnabled = true;
+            base.IsEnabled = true;
             MouseLeave += MouseLeaveHandler;
         }
         #endregion
