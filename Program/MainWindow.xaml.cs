@@ -38,7 +38,25 @@ namespace FluentUI_Framework
             {
                 RareBar.Value = eee;
             }
-            
+
+            TTTTT.IsChecked = true;
+        }
+
+        private void CheckBox_Checked(Object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("DDD");
+        }
+
+        private void ToggleButton_Checked(Object sender, RoutedEventArgs e)
+        {
+            SecondaryButton.IsEnabled = true;
+            PrimaryButton.IsEnabled = true;
+        }
+
+        private void ToggleButton_UnChecked(Object sender, RoutedEventArgs e)
+        {
+            SecondaryButton.IsEnabled = false;
+            PrimaryButton.IsEnabled = false;
         }
     }
 }

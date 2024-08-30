@@ -73,12 +73,12 @@ namespace FluentUI
 
             if (Theme.IsDarkMode)
             {
-                _indicator.Background = AccentColors.DarkMode.PrimaryColorAsBrush;
+                _indicator.Background = AccentColors.DarkMode.IdleAsBrush;
                 Background = _darkMode_Background;
             }
             else
             {
-                _indicator.Background = AccentColors.LightMode.PrimaryColorAsBrush;
+                _indicator.Background = AccentColors.LightMode.IdleAsBrush;
                 Background = _lightMode_Background;
             }
 
@@ -155,12 +155,12 @@ namespace FluentUI
 
             if (Theme.IsDarkMode)
             {
-                _foregroundAnimation.To = AccentColors.DarkMode.PrimaryColorAsBrush;
+                _foregroundAnimation.To = AccentColors.DarkMode.IdleAsBrush;
                 _backgroundAnimation.To = _darkMode_Background;
             }
             else
             {
-                _foregroundAnimation.To = AccentColors.LightMode.PrimaryColorAsBrush;
+                _foregroundAnimation.To = AccentColors.LightMode.IdleAsBrush;
                 _backgroundAnimation.To = _lightMode_Background;
             }
 

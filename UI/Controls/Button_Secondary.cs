@@ -62,9 +62,10 @@ namespace FluentUI
             Focusable = true;
             Height = 32d;
             Width = 152d;
+            BorderThickness = new(0d, 1d, 0d, 0d);
             Child = _buttonBackground;
 
-            _buttonBackground.Margin = new(1d);
+            _buttonBackground.Margin = new(1d, 0d, 1d, 1d);
             _buttonBackground.CornerRadius = new(4d);
             _buttonBackground.Child = _textBlock;
 
@@ -91,30 +92,34 @@ namespace FluentUI
 
                 if (Theme.IsDarkMode)
                 {
-                    Background = Colors.DarkMode.Border;
-                    _buttonBackground.Background = Colors.DarkMode.Background;
                     _textBlock.Foreground = Brushes.White;
+                    Background = Colors.DarkMode.IdleBorder;
+                    BorderBrush = Colors.DarkMode.IdleBorderSpecial;
+                    _buttonBackground.Background = Colors.DarkMode.IdleBackground;
                 }
                 else
                 {
-                    Background = Colors.LightMode.Border;
-                    _buttonBackground.Background = Colors.LightMode.Background;
-                    _textBlock.Foreground = Colors.LightMode.Font;
+                    _textBlock.Foreground = Colors.LightMode.IdleFont;
+                    Background = Colors.LightMode.IdleBorder;
+                    BorderBrush = Colors.LightMode.IdleBorderSpecial;
+                    _buttonBackground.Background = Colors.LightMode.IdleBackground;
                 }
             }
             else
             {
                 if (Theme.IsDarkMode)
                 {
-                    Background = Colors.DarkMode.BorderDisabled;
-                    _buttonBackground.Background = Colors.DarkMode.BackgroundDisabled;
-                    _textBlock.Foreground = Colors.DarkMode.FontDisabled;
+                    _textBlock.Foreground = Colors.DarkMode.DisabledFont;
+                    Background = Colors.DarkMode.DisabledBorder;
+                    BorderBrush = Colors.DarkMode.DisabledBorderSpecial;
+                    _buttonBackground.Background = Colors.DarkMode.DisabledBackground;
                 }
                 else
                 {
-                    Background = Colors.LightMode.BorderDisabled;
-                    _buttonBackground.Background = Colors.LightMode.BackgroundDisabled;
-                    _textBlock.Foreground = Colors.LightMode.FontDisabled;
+                    _textBlock.Foreground = Colors.LightMode.DisabledFont;
+                    Background = Colors.LightMode.DisabledBorder;
+                    BorderBrush = Colors.LightMode.DisabledBorderSpecial;
+                    _buttonBackground.Background = Colors.LightMode.DisabledBackground;
                 }
             }
 
@@ -125,47 +130,56 @@ namespace FluentUI
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-        #region BrushAnimations
+        #region Animation Definitions
         private readonly SolidColorBrushAnimation _idle_font_animation = new() { Duration = UI.LongAnimationDuration };
         private readonly SolidColorBrushAnimation _idle_border_animation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _idle_border_special_animation = new() { Duration = UI.LongAnimationDuration };
         private readonly SolidColorBrushAnimation _idle_background_animation = new() { Duration = UI.LongAnimationDuration };
 
         private readonly SolidColorBrushAnimation _mouse_over_background_animation = new() { Duration = UI.LongAnimationDuration };
 
         private readonly SolidColorBrushAnimation _mouse_down_font_animation = new() { Duration = UI.ShortAnimationDuration };
         private readonly SolidColorBrushAnimation _mouse_down_border_animation = new() { Duration = UI.ShortAnimationDuration };
+        private readonly SolidColorBrushAnimation _mouse_down_border_special_animation = new() { Duration = UI.ShortAnimationDuration };
         private readonly SolidColorBrushAnimation _mouse_down_background_animation = new() { Duration = UI.ShortAnimationDuration };
 
         private readonly SolidColorBrushAnimation _disable_font_animation = new() { Duration = UI.LongAnimationDuration };
         private readonly SolidColorBrushAnimation _disable_border_animation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _disable_border_special_animation = new() { Duration = UI.LongAnimationDuration };
         private readonly SolidColorBrushAnimation _disable_background_animation = new() { Duration = UI.LongAnimationDuration };
 
         private Boolean _buttonUpPending = false;
 
         private void BeginButtonDownAnimation()
         {
+            _mouse_down_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _mouse_down_font_animation);
+
             _mouse_down_border_animation.From = (SolidColorBrush)Background;
             BeginAnimation(Border.BackgroundProperty, _mouse_down_border_animation);
 
+            _mouse_down_border_special_animation.From = (SolidColorBrush)BorderBrush;
+            BeginAnimation(Border.BorderBrushProperty, _mouse_down_border_special_animation);
+
             _mouse_down_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
             _buttonBackground.BeginAnimation(Border.BackgroundProperty, _mouse_down_background_animation);
-
-            _mouse_down_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _mouse_down_font_animation);
 
             _buttonUpPending = true;
         }
 
         private void BeginButtonUpAnimation()
         {
+            _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
+
             _idle_border_animation.From = (SolidColorBrush)Background;
             BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
 
+            _idle_border_special_animation.From = (SolidColorBrush)BorderBrush;
+            BeginAnimation(Border.BorderBrushProperty, _idle_border_special_animation);
+
             _mouse_over_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
             _buttonBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_background_animation);
-
-            _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
 
             _buttonUpPending = false;
         }
@@ -222,11 +236,11 @@ namespace FluentUI
 
             if (_buttonUpPending) // when user presses mouse key down, then drags out of the object (skips mouse up event)
             {
-                _idle_border_animation.From = (SolidColorBrush)Background;
-                BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
-
                 _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
                 _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
+
+                _idle_border_animation.From = (SolidColorBrush)Background;
+                BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
 
                 _buttonUpPending = false;
             }
@@ -241,26 +255,34 @@ namespace FluentUI
 
             //
 
+            _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_font_animation);
+
             _disable_border_animation.From = (SolidColorBrush)Background;
             BeginAnimation(Border.BackgroundProperty, _disable_border_animation);
 
+            _disable_border_special_animation.From = (SolidColorBrush)BorderBrush;
+            BeginAnimation(Border.BorderBrushProperty, _disable_border_special_animation);
+
             _disable_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
             _buttonBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
-
-            _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_font_animation);
         }
 
         private void Enable()
         {
+            _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
+
             _idle_border_animation.From = (SolidColorBrush)Background;
             BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
+
+            _idle_border_special_animation.From = (SolidColorBrush)BorderBrush;
+            BeginAnimation(Border.BorderBrushProperty, _idle_border_special_animation);
 
             _idle_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
             _buttonBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
 
-            _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
+            //
 
             _this.IsEnabled = true;
             MouseLeave += MouseLeaveHandler;
@@ -271,37 +293,48 @@ namespace FluentUI
 
         private static class Colors
         {
+            internal static class DarkMode
+            {
+                internal static readonly SolidColorBrush FocusVisual = Brushes.White;
+
+                internal static readonly SolidColorBrush IdleFont = Brushes.White;
+                internal static readonly SolidColorBrush IdleBorder = new(Color.FromRgb(0x30, 0x30, 0x30));
+                internal static readonly SolidColorBrush IdleBorderSpecial = new(Color.FromRgb(0x35, 0x35, 0x35));
+                internal static readonly SolidColorBrush IdleBackground = new(Color.FromRgb(0x2d, 0x2d, 0x2d));
+
+                internal static readonly SolidColorBrush MouseOverBackground = new(Color.FromRgb(0x32, 0x32, 0x32));
+
+                internal static readonly SolidColorBrush MouseDownFont = new(Color.FromRgb(0xce, 0xce, 0xce));
+                internal static readonly SolidColorBrush MouseDownBorder = new(Color.FromRgb(0x30, 0x30, 0x30));
+                internal static readonly SolidColorBrush MouseDownBorderSpecial = new(Color.FromRgb(0x30, 0x30, 0x30));
+                internal static readonly SolidColorBrush MouseDownBackground = new(Color.FromRgb(0x27, 0x27, 0x27));
+
+                internal static readonly SolidColorBrush DisabledFont = new(Color.FromRgb(0x78, 0x78, 0x78));
+                internal static readonly SolidColorBrush DisabledBorder = new(Color.FromRgb(0x30, 0x30, 0x30));
+                internal static readonly SolidColorBrush DisabledBorderSpecial = new(Color.FromRgb(0x30, 0x30, 0x30));
+                internal static readonly SolidColorBrush DisabledBackground = new(Color.FromRgb(0x2a, 0x2a, 0x2a));
+            }
+
             internal static class LightMode
             {
                 internal static readonly SolidColorBrush FocusVisual = new(Color.FromRgb(0x1a, 0x1a, 0x1a));
 
-                internal static readonly SolidColorBrush Border = new(Color.FromRgb(0xd9, 0xd9, 0xd9));
-                internal static readonly SolidColorBrush BorderMouseDown = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
-                internal static readonly SolidColorBrush BorderDisabled = new(Color.FromRgb(0xec, 0xec, 0xec));
+                internal static readonly SolidColorBrush IdleFont = new(Color.FromRgb(0x1b, 0x1b, 0x1b));
+                internal static readonly SolidColorBrush IdleBorder = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
+                internal static readonly SolidColorBrush IdleBorderSpecial = new(Color.FromRgb(0xcc, 0xcc, 0xcc));
+                internal static readonly SolidColorBrush IdleBackground = new(Color.FromRgb(0xfb, 0xfb, 0xfb));
 
-                internal static readonly SolidColorBrush Font = new(Color.FromRgb(0x1b, 0x1b, 0x1b));
-                internal static readonly SolidColorBrush FontMouseDown = new(Color.FromRgb(0x5d, 0x5d, 0x5d));
-                internal static readonly SolidColorBrush FontDisabled = new(Color.FromRgb(0xa0, 0xa0, 0xa0));
+                internal static readonly SolidColorBrush MouseOverBackground = new(Color.FromRgb(0xf6, 0xf6, 0xf6));
+                
+                internal static readonly SolidColorBrush MouseDownFont = new(Color.FromRgb(0x5d, 0x5d, 0x5d));
+                internal static readonly SolidColorBrush MouseDownBorder = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
+                internal static readonly SolidColorBrush MouseDownBorderSpecial = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
+                internal static readonly SolidColorBrush MouseDownBackground = new(Color.FromRgb(0xf5, 0xf5, 0xf5));
 
-                internal static readonly SolidColorBrush Background = new(Color.FromRgb(0xfb, 0xfb, 0xfb));
-                internal static readonly SolidColorBrush BackgroundMouseOver = new(Color.FromRgb(0xf6, 0xf6, 0xf6));
-                internal static readonly SolidColorBrush BackgroundMouseDown = new(Color.FromRgb(0xf5, 0xf5, 0xf5));
-                internal static readonly SolidColorBrush BackgroundDisabled = new(Color.FromRgb(0xfa, 0xfa, 0xfa));
-            }
-
-            internal static class DarkMode
-            {
-                internal static readonly SolidColorBrush Border = new(Color.FromRgb(0x35, 0x35, 0x35));
-                internal static readonly SolidColorBrush BorderMouseDown = new(Color.FromRgb(0x30, 0x30, 0x30));
-                internal static readonly SolidColorBrush BorderDisabled = new(Color.FromRgb(0x3a, 0x3a, 0x3a));
-
-                internal static readonly SolidColorBrush FontMouseDown = new(Color.FromRgb(0xce, 0xce, 0xce));
-                internal static readonly SolidColorBrush FontDisabled = new(Color.FromRgb(0x7e, 0x7e, 0x7e));
-
-                internal static readonly SolidColorBrush Background = new(Color.FromRgb(0x2d, 0x2d, 0x2d));
-                internal static readonly SolidColorBrush BackgroundMouseOver = new(Color.FromRgb(0x32, 0x32, 0x32));
-                internal static readonly SolidColorBrush BackgroundMouseDown = new(Color.FromRgb(0x27, 0x27, 0x27));
-                internal static readonly SolidColorBrush BackgroundDisabled = new(Color.FromRgb(0x34, 0x34, 0x34));
+                internal static readonly SolidColorBrush DisabledFont = new(Color.FromRgb(0x9d, 0x9d, 0x9d));
+                internal static readonly SolidColorBrush DisabledBorder = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
+                internal static readonly SolidColorBrush DisabledBorderSpecial = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
+                internal static readonly SolidColorBrush DisabledBackground = new(Color.FromRgb(0xf5, 0xf5, 0xf5));
             }
         }
 
@@ -314,39 +347,51 @@ namespace FluentUI
 
             if (Theme.IsDarkMode)
             {
-                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, Brushes.White);
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, Colors.DarkMode.FocusVisual);
 
-                _idle_font_animation.To = Brushes.White;
-                _idle_background_animation.To = Colors.DarkMode.Background;
-                _idle_border_animation.To = Colors.DarkMode.Border;
+                BorderThickness = new(0d, 1d, 0d, 0d);
+                _buttonBackground.Margin = new(1d, 0d, 1d, 1d);
 
-                _mouse_over_background_animation.To = Colors.DarkMode.BackgroundMouseOver;
+                _idle_font_animation.To = Colors.DarkMode.IdleFont;
+                _idle_border_animation.To = Colors.DarkMode.IdleBorder;
+                _idle_border_special_animation.To = Colors.DarkMode.IdleBorderSpecial;
+                _idle_background_animation.To = Colors.DarkMode.IdleBackground;
 
-                _mouse_down_font_animation.To = Colors.DarkMode.FontMouseDown;
-                _mouse_down_background_animation.To = Colors.DarkMode.BackgroundMouseDown;
-                _mouse_down_border_animation.To = Colors.DarkMode.BorderMouseDown;
+                _mouse_over_background_animation.To = Colors.DarkMode.MouseOverBackground;
 
-                _disable_font_animation.To = Colors.DarkMode.FontDisabled;
-                _disable_background_animation.To = Colors.DarkMode.BackgroundDisabled;
-                _disable_border_animation.To = Colors.DarkMode.BorderDisabled;
+                _mouse_down_font_animation.To = Colors.DarkMode.MouseDownFont;
+                _mouse_down_border_animation.To = Colors.DarkMode.MouseDownBorder;
+                _mouse_down_border_special_animation.To = Colors.DarkMode.MouseDownBorderSpecial;
+                _mouse_down_background_animation.To = Colors.DarkMode.MouseDownBackground;
+
+                _disable_font_animation.To = Colors.DarkMode.DisabledFont;
+                _disable_border_special_animation.To = Colors.DarkMode.DisabledBorderSpecial;
+                _disable_border_animation.To = Colors.DarkMode.DisabledBorder;
+                _disable_background_animation.To = Colors.DarkMode.DisabledBackground;
             }
             else
             {
                 focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, Colors.LightMode.FocusVisual);
 
-                _idle_font_animation.To = Colors.LightMode.Font;
-                _idle_background_animation.To = Colors.LightMode.Background;
-                _idle_border_animation.To = Colors.LightMode.Border;
+                BorderThickness = new(0d, 0d, 0d, 1d);
+                _buttonBackground.Margin = new(1d, 1d, 1d, 0d);
 
-                _mouse_over_background_animation.To = Colors.LightMode.BackgroundMouseOver;
+                _idle_font_animation.To = Colors.LightMode.IdleFont;
+                _idle_border_animation.To = Colors.LightMode.IdleBorder;
+                _idle_border_special_animation.To = Colors.LightMode.IdleBorderSpecial;
+                _idle_background_animation.To = Colors.LightMode.IdleBackground;
 
-                _mouse_down_font_animation.To = Colors.LightMode.FontMouseDown;
-                _mouse_down_background_animation.To = Colors.LightMode.BackgroundMouseDown;
-                _mouse_down_border_animation.To = Colors.LightMode.BorderMouseDown;
+                _mouse_over_background_animation.To = Colors.LightMode.MouseOverBackground;
 
-                _disable_font_animation.To = Colors.LightMode.FontDisabled;
-                _disable_background_animation.To = Colors.LightMode.BackgroundDisabled;
-                _disable_border_animation.To = Colors.LightMode.BorderDisabled;
+                _mouse_down_font_animation.To = Colors.LightMode.MouseDownFont;
+                _mouse_down_border_animation.To = Colors.LightMode.MouseDownBorder;
+                _mouse_down_border_special_animation.To = Colors.LightMode.MouseDownBorderSpecial;
+                _mouse_down_background_animation.To = Colors.LightMode.MouseDownBackground;
+
+                _disable_font_animation.To = Colors.LightMode.DisabledFont;
+                _disable_border_special_animation.To = Colors.LightMode.DisabledBorderSpecial;
+                _disable_border_animation.To = Colors.LightMode.DisabledBorder;
+                _disable_background_animation.To = Colors.LightMode.DisabledBackground;
             }
 
             ControlTemplate focusVisualControlTemplate = new(typeof(Control));
@@ -365,25 +410,31 @@ namespace FluentUI
         {
             if (_isEnabled)
             {
+                _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+                _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
+
                 _idle_border_animation.From = (SolidColorBrush)Background;
                 BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
 
+                _idle_border_special_animation.From = (SolidColorBrush)BorderBrush;
+                BeginAnimation(Border.BorderBrushProperty, _idle_border_special_animation);
+
                 _idle_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
                 _buttonBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
-
-                _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-                _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
             }
             else
             {
+                _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+                _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_font_animation);
+
                 _disable_border_animation.From = (SolidColorBrush)Background;
                 BeginAnimation(Border.BackgroundProperty, _disable_border_animation);
 
-                _disable_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
-                _buttonBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
+                _disable_border_special_animation.From = (SolidColorBrush)BorderBrush;
+                BeginAnimation(Border.BorderBrushProperty, _disable_border_special_animation);
 
-                _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-                _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_font_animation);
+                _disable_background_animation.From = (SolidColorBrush)_buttonBackground.Background;
+                _buttonBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);                
             }
         }
     }

@@ -12,10 +12,6 @@
         Height="450" Width="800"
         >
 
-    <Window.Resources>
-
-    </Window.Resources>
-
     <FluentUI:Grid_WindowBackground>
 
         <TextBox x:Name="YEEz"
@@ -27,7 +23,6 @@
             Content="Start Progress"
             Margin="400,0,0,0"
             PreviewClick="PrimaryButton_Click"
-            IsEnabled="True"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
@@ -39,6 +34,7 @@
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
+        <CheckBox x:Name="TTTTT" IsEnabled="False" Checked="CheckBox_Checked" Margin="128,365,539,23"/>
 
         <FluentUI:ProgressBar x:Name="RareBar"
             Value="44"
@@ -48,7 +44,20 @@
             Width="550"
             />
 
-        <FluentUI:Checkbox Margin="500,266,172,148" Content="Test"/>
+        <ToggleButton
+            HorizontalAlignment="Right"
+            Width="57"
+            Height="24"
+            VerticalAlignment="Top"
+            Margin="0,79,100,0"
+            Checked="ToggleButton_Checked"
+            Unchecked="ToggleButton_UnChecked"/>
+
+        <Border Margin="0,0,114,154" Background="#a914ff" CornerRadius="5" BorderThickness="0,0,0,1" BorderBrush="#610099" HorizontalAlignment="Right" Width="116" Height="30" VerticalAlignment="Bottom">
+            <Border Margin="1,1,1,0" CornerRadius="4" Background="#a200ff"/>
+        </Border>
+
+
 
         <FluentUI:TextBlock
             Text="Test"
