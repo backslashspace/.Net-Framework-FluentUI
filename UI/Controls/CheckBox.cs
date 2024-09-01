@@ -64,10 +64,42 @@ namespace FluentUI
 
         new internal Boolean IsInitialized { get; private set; } = false;
 
+        internal enum OptionMarkType
+        {
+            Checkmark = 0,
+            Partial = 1
+        }
+
+        private static readonly Geometry _visualOptionMarkCheckbox = Geometry.Parse("M 12 -4 L 4 4 L 0 0 L 1 -1 L 4 2 L 11 -5 L 12 -4");
+        private static readonly Geometry _visualOptionMarkPartial = Geometry.Parse("M0 0 8 0 8 2 0 2 0 0");
+        internal OptionMarkType _optionMarkType = OptionMarkType.Checkmark;
+        internal OptionMarkType OptionMark
+        {
+            get => _optionMarkType;
+            set
+            {
+                if (_optionMarkType == value) return;
+
+                _optionMarkType = value;
+
+                if (value == OptionMarkType.Partial)
+                {
+                    _visualOptionMark.Data = _visualOptionMarkPartial;
+                    _visualOptionMark.Width = 8d;
+                }
+                else
+                {
+                    _visualOptionMark.Data = _visualOptionMarkCheckbox;
+                    _visualOptionMark.Width = 12d;
+                }
+            }
+        }
+
         #region Definitions
         private readonly Border _checkboxBorder = new();
         private readonly Border _checkboxBackground = new();
-        private readonly Path _optionMark = new();
+        private readonly Path _visualOptionMark = new();
+
         private readonly TextBlock _textBlock = new(false);
 
         internal delegate void CheckedHandler(Checkbox sender);
@@ -92,13 +124,14 @@ namespace FluentUI
             _checkboxBackground.CornerRadius = new(3.5);
             _checkboxBorder.Child = _checkboxBackground;
 
-            _optionMark.HorizontalAlignment = HorizontalAlignment.Center;
-            _optionMark.VerticalAlignment = VerticalAlignment.Center;
-            _optionMark.Height = 12d;
-            _optionMark.Width = 12d;
-            _optionMark.Stretch = Stretch.Uniform;
-            _optionMark.Data = Geometry.Parse("M 12 -4 L 4 4 L 0 0 L 1 -1 L 4 2 L 11 -5 L 12 -4");
-            _checkboxBackground.Child = _optionMark;
+            _visualOptionMark.HorizontalAlignment = HorizontalAlignment.Center;
+            _visualOptionMark.VerticalAlignment = VerticalAlignment.Center;
+            _visualOptionMark.Height = 12d;
+            _visualOptionMark.Width = 12d;
+            _visualOptionMark.Stretch = Stretch.Uniform;
+            _visualOptionMark.Data = _visualOptionMarkCheckbox;
+            _visualOptionMark.Margin = new(0d, 0.5d, 0d, 0d);
+            _checkboxBackground.Child = _visualOptionMark;
 
             _textBlock.Margin = new(28, 1, 0, 0);
             _textBlock.HorizontalAlignment = HorizontalAlignment.Left;
@@ -131,10 +164,10 @@ namespace FluentUI
                 {
                     _checkboxBorder.Background = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0x9e, 0x9e, 0x9e)) : new SolidColorBrush(Color.FromRgb(0x89, 0x89, 0x89));
                     _checkboxBackground.Background = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0x27, 0x27, 0x27)) : new SolidColorBrush(Color.FromRgb(0xf5, 0xf5, 0xf5));
-                    _optionMark.Visibility = Visibility.Collapsed;
+                    _visualOptionMark.Visibility = Visibility.Collapsed;
                 }
 
-                _optionMark.Fill = Theme.IsDarkMode ? Brushes.Black : Brushes.White;
+                _visualOptionMark.Fill = Theme.IsDarkMode ? Brushes.Black : Brushes.White;
             }
             else
             {
@@ -147,10 +180,10 @@ namespace FluentUI
                 {
                     _checkboxBorder.Background = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0x4c, 0x4c, 0x4c)) : new SolidColorBrush(Color.FromRgb(0xc5, 0xc5, 0xc5));
                     _checkboxBackground.Background = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0x2b, 0x2b, 0x2b)) : new SolidColorBrush(Color.FromRgb(0xfb, 0xfb, 0xfb));
-                    _optionMark.Visibility = Visibility.Collapsed;
+                    _visualOptionMark.Visibility = Visibility.Collapsed;
                 }
 
-                _optionMark.Fill = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0xa7, 0xa7, 0xa7)) : Brushes.White;
+                _visualOptionMark.Fill = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0xa7, 0xa7, 0xa7)) : Brushes.White;
             }
 
             ColorProviderChanged();
@@ -197,8 +230,8 @@ namespace FluentUI
             _mouse_down_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
             _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_down_background_animation);
 
-            _mouse_down_option_mark_animation.From = _optionMark.Opacity;
-            _optionMark.BeginAnimation(Path.OpacityProperty, _mouse_down_option_mark_animation);
+            _mouse_down_option_mark_animation.From = _visualOptionMark.Opacity;
+            _visualOptionMark.BeginAnimation(Path.OpacityProperty, _mouse_down_option_mark_animation);
 
             _buttonUpPending = true;
         }
@@ -211,8 +244,8 @@ namespace FluentUI
             _mouse_over_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
             _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_background_animation);
 
-            _idle_option_mark_opacity_animation.From = _optionMark.Opacity;
-            _optionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
+            _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+            _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
 
             _buttonUpPending = false;
         }
@@ -278,8 +311,8 @@ namespace FluentUI
 
             if (_buttonUpPending) // when user presses mouse key down, then drags out of the object (skips mouse up event)
             {
-                _idle_option_mark_animation.From = (SolidColorBrush)_optionMark.Fill;
-                _optionMark.BeginAnimation(Path.FillProperty, _idle_option_mark_animation);
+                _idle_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                _visualOptionMark.BeginAnimation(Path.FillProperty, _idle_option_mark_animation);
 
                 _buttonUpPending = false;
             }
@@ -300,8 +333,8 @@ namespace FluentUI
             _disable_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
             _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
 
-            _disable_option_mark_animation.From = (SolidColorBrush)_optionMark.Fill;
-            _optionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
+            _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+            _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
 
             _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
             _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_option_mark_animation);
@@ -315,8 +348,8 @@ namespace FluentUI
             _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
             _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
 
-            _disable_option_mark_animation.From = (SolidColorBrush)_optionMark.Fill;
-            _optionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
+            _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+            _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
 
             _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
             _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
