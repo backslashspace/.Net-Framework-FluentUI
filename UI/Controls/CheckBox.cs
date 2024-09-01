@@ -6,6 +6,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
+#pragma warning disable CS8618
+
 namespace FluentUI
 {
     internal sealed class Checkbox : Grid
@@ -46,11 +48,63 @@ namespace FluentUI
             get => _isChecked;
             set
             {
+                if (_isChecked == value) return;
                 _isChecked = value;
+                if (!IsInitialized) return;
 
-                //start animation to new state
+                if (value)
+                {
+                    _visualOptionMark.Visibility = Visibility.Visible;
 
-                if (!EventDecoupling)
+                    if (_isEnabled)
+                    {
+                        _idle_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                        _visualOptionMark.BeginAnimation(Path.FillProperty, _idle_option_mark_animation);
+
+                        _idle_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                        _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
+
+                        _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                        _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
+                    }
+                    else
+                    {
+                        _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                        _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
+                        
+                        _disable_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                        _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_border_animation);
+
+                        _disable_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                        _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
+                    }
+
+                    _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+                    _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
+                }
+                else
+                {
+                    _visualOptionMark.Visibility = Visibility.Collapsed;
+
+                    if (_isEnabled)
+                    {
+                        _idle_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                        _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_border_animation);
+
+                        _idle_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                        _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_background_animation);
+                    }
+                    else
+                    {
+                        _disable_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                        _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_unchecked_border_animation);
+
+                        _disable_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                        _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_unchecked_background_animation);
+                    }
+                }
+
+                if (!DecoupledEvents)
                 {
                     if (_isChecked) Checked?.Invoke(this);
                     else Unchecked?.Invoke(this);
@@ -60,17 +114,14 @@ namespace FluentUI
 
         /// <summary>Whether changes to <seealso cref="IsChecked"/> made by the backend should raise <seealso cref="Checked"/> or <seealso cref="Unchecked"/> events.</summary>
         /// <remarks>Default = false</remarks>
-        internal Boolean EventDecoupling = false;
-
-        new internal Boolean IsInitialized { get; private set; } = false;
+        internal Boolean DecoupledEvents { get; set; } = false;
 
         internal enum OptionMarkType
         {
             Checkmark = 0,
             Partial = 1
         }
-
-        private static readonly Geometry _visualOptionMarkCheckbox = Geometry.Parse("M 12 -4 L 4 4 L 0 0 L 1 -1 L 4 2 L 11 -5 L 12 -4");
+        private static readonly Geometry _visualOptionMarkCheckbox = Geometry.Parse("M12-4 4 4 0 0 1-1 4 2 11-5 12-4");
         private static readonly Geometry _visualOptionMarkPartial = Geometry.Parse("M0 0 8 0 8 2 0 2 0 0");
         internal OptionMarkType _optionMarkType = OptionMarkType.Checkmark;
         internal OptionMarkType OptionMark
@@ -95,6 +146,10 @@ namespace FluentUI
             }
         }
 
+        new internal Boolean IsInitialized { get; private set; } = false;
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
         #region Definitions
         private readonly Border _checkboxBorder = new();
         private readonly Border _checkboxBackground = new();
@@ -112,6 +167,7 @@ namespace FluentUI
         {
             Height = 20d;
             Width = 128d;
+            Focusable = true;
             UseLayoutRounding = true;
 
             _checkboxBorder.Height = 20d;
@@ -167,6 +223,7 @@ namespace FluentUI
                     _visualOptionMark.Visibility = Visibility.Collapsed;
                 }
 
+                _textBlock.Foreground = Theme.IsDarkMode ? Colors.DarkMode.IdleFont : Colors.LightMode.IdleFont;
                 _visualOptionMark.Fill = Theme.IsDarkMode ? Brushes.Black : Brushes.White;
             }
             else
@@ -183,6 +240,7 @@ namespace FluentUI
                     _visualOptionMark.Visibility = Visibility.Collapsed;
                 }
 
+                _textBlock.Foreground = Theme.IsDarkMode ? Colors.DarkMode.DisabledFont : Colors.LightMode.DisabledFont;
                 _visualOptionMark.Fill = Theme.IsDarkMode ? new SolidColorBrush(Color.FromRgb(0xa7, 0xa7, 0xa7)) : Brushes.White;
             }
 
@@ -224,28 +282,50 @@ namespace FluentUI
 
         private void BeginButtonDownAnimation()
         {
-            _mouse_down_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
-            _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_down_border_animation);
+            if (_isChecked)
+            {
+                _mouse_down_option_mark_animation.From = _visualOptionMark.Opacity;
+                _visualOptionMark.BeginAnimation(Path.OpacityProperty, _mouse_down_option_mark_animation);
 
-            _mouse_down_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
-            _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_down_background_animation);
+                _mouse_down_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_down_border_animation);
 
-            _mouse_down_option_mark_animation.From = _visualOptionMark.Opacity;
-            _visualOptionMark.BeginAnimation(Path.OpacityProperty, _mouse_down_option_mark_animation);
+                _mouse_down_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_down_background_animation);
+            }
+            else
+            {
+                _mouse_down_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_down_unchecked_border_animation);
+
+                _mouse_down_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_down_unchecked_background_animation);
+            }
 
             _buttonUpPending = true;
         }
 
         private void BeginButtonUpAnimation()
         {
-            _mouse_over_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
-            _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_over_border_animation);
+            if (_isChecked)
+            {
+                _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+                _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
 
-            _mouse_over_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
-            _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_background_animation);
+                _mouse_over_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_over_border_animation);
 
-            _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
-            _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
+                _mouse_over_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_background_animation);
+            }
+            else
+            {
+                _mouse_over_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_over_unchecked_border_animation);
+
+                _mouse_over_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_unchecked_background_animation);
+            }
 
             _buttonUpPending = false;
         }
@@ -268,9 +348,10 @@ namespace FluentUI
         {
             if (e.Key != Key.Space) return;
 
-            BeginButtonUpAnimation();
-
             _isChecked = !_isChecked;
+            _visualOptionMark.Visibility = _isChecked ? Visibility.Visible : Visibility.Collapsed;
+
+            BeginButtonUpAnimation();
 
             e.Handled = true;
 
@@ -282,20 +363,32 @@ namespace FluentUI
         #region MouseHandler
         private void MouseEnterHandler(Object sender, MouseEventArgs e)
         {
-            _mouse_over_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
-            _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_over_border_animation);
+            if (_isChecked)
+            {
+                _mouse_over_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_over_border_animation);
 
-            _mouse_over_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
-            _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_background_animation);
+                _mouse_over_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_background_animation);
+            }
+            else
+            {
+                _mouse_over_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _mouse_over_unchecked_border_animation);
+
+                _mouse_over_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _mouse_over_unchecked_background_animation);
+            }
         }
 
         private void PreviewMouseDownHandler(Object sender, MouseButtonEventArgs e) => BeginButtonDownAnimation();
 
         private void PreviewMouseUpHandler(Object sender, MouseButtonEventArgs e)
         {
-            BeginButtonUpAnimation();
-
             _isChecked = !_isChecked;
+            _visualOptionMark.Visibility = _isChecked ? Visibility.Visible : Visibility.Collapsed;
+
+            BeginButtonUpAnimation();
 
             if (_isChecked) Checked?.Invoke(this);
             else Unchecked?.Invoke(this);
@@ -303,18 +396,29 @@ namespace FluentUI
 
         private void MouseLeaveHandler(Object sender, MouseEventArgs e)
         {
-            _idle_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
-            _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
-
-            _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
-            _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
-
-            if (_buttonUpPending) // when user presses mouse key down, then drags out of the object (skips mouse up event)
+            if (_isChecked)
             {
-                _idle_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
-                _visualOptionMark.BeginAnimation(Path.FillProperty, _idle_option_mark_animation);
+                if (_buttonUpPending) // when user presses mouse key down, then drags out of the object (skips mouse up event)
+                {
+                    _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+                    _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
 
-                _buttonUpPending = false;
+                    _buttonUpPending = false;
+                }
+
+                _idle_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
+
+                _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
+            }
+            else
+            {
+                _idle_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_border_animation);
+
+                _idle_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_background_animation);
             }
         }
         #endregion
@@ -327,32 +431,57 @@ namespace FluentUI
 
             //
 
-            _disable_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
-            _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_border_animation);
-
-            _disable_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
-            _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
-
-            _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
-            _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
-
             _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
-            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_option_mark_animation);
+            _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_font_animation);
+
+            if (_isChecked)
+            {
+                _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
+
+                _disable_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_border_animation);
+
+                _disable_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
+            }
+            else
+            {
+                _disable_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_unchecked_border_animation);
+
+                _disable_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_unchecked_background_animation);
+            }
+
+            _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+            _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
         }
 
         private void Enable()
         {
-            _idle_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
-            _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
-
-            _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
-            _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
-
-            _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
-            _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
-
             _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
             _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
+
+            if (_isChecked)
+            {
+                _idle_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                _visualOptionMark.BeginAnimation(Path.FillProperty, _idle_option_mark_animation);
+
+                _idle_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
+
+                _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
+            }
+            else
+            {
+                _idle_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_border_animation);
+
+                _idle_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_background_animation);
+            }
 
             base.IsEnabled = true;
             MouseLeave += MouseLeaveHandler;
@@ -391,7 +520,7 @@ namespace FluentUI
                 internal static readonly SolidColorBrush IdleUncheckedBorder = new(Color.FromRgb(0x89, 0x89, 0x89));
                 internal static readonly SolidColorBrush IdleUncheckedBackground = new(Color.FromRgb(0xf5, 0xf5, 0xf5));
 
-                internal static readonly SolidColorBrush MouseOverUncheckedBorder = new(Color.FromRgb(0x89, 0x89, 0x89));
+                internal static readonly SolidColorBrush MouseOverUncheckedBorder = new(Color.FromRgb(0x87, 0x87, 0x87));
                 internal static readonly SolidColorBrush MouseOverUncheckedBackground = new(Color.FromRgb(0xec, 0xec, 0xec));
 
                 internal static readonly SolidColorBrush MouseDownUncheckedBorder = new(Color.FromRgb(0xbb, 0xbb, 0xbb));
@@ -408,58 +537,97 @@ namespace FluentUI
 
         private void ColorProviderChanged()
         {
+            FrameworkElementFactory focusVisualFrameworkElementFactory = new(typeof(Border));
+            focusVisualFrameworkElementFactory.SetValue(Border.BorderThicknessProperty, new Thickness(2d));
+            focusVisualFrameworkElementFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(-6d));
+            focusVisualFrameworkElementFactory.SetValue(Border.CornerRadiusProperty, new CornerRadius(8d));
+
             if (Theme.IsDarkMode)
             {
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, AccentColors.DarkMode.FocusVisualAsBrush);
+
                 _idle_font_animation.To = Colors.DarkMode.IdleFont;
                 _idle_option_mark_animation.To = Colors.DarkMode.IdleOptionMark;
-                _idle_border_animation.To = AccentColors.DarkMode.IdleBorderAsBrush;
+                
+                _idle_border_animation.To = AccentColors.DarkMode.IdleAsBrush;
                 _idle_background_animation.To = AccentColors.DarkMode.IdleAsBrush;
+                
                 _idle_unchecked_border_animation.To = Colors.DarkMode.IdleUncheckedBorder;
                 _idle_unchecked_background_animation.To = Colors.DarkMode.IdleUncheckedBackground;
+                
+                //
 
                 _mouse_over_border_animation.To = AccentColors.DarkMode.MouseOverBorderAsBrush;
                 _mouse_over_background_animation.To = AccentColors.DarkMode.MouseOverBackgroundAsBrush;
+                
                 _mouse_over_unchecked_border_animation.To = Colors.DarkMode.MouseOverUncheckedBorder;
                 _mouse_over_unchecked_background_animation.To = Colors.DarkMode.MouseOverUncheckedBackground;
 
-                _mouse_down_border_animation.To = AccentColors.DarkMode.MouseDownAsBrush;
+                //
+
+                _mouse_down_border_animation.To = AccentColors.DarkMode.MouseDownBorderAsBrush;
                 _mouse_down_background_animation.To = AccentColors.DarkMode.MouseDownAsBrush;
+                
                 _mouse_down_unchecked_border_animation.To = Colors.DarkMode.MouseDownUncheckedBorder;
                 _mouse_down_unchecked_background_animation.To = Colors.DarkMode.MouseDownUncheckedBackground;
 
+                //
+
                 _disable_font_animation.To = Colors.DarkMode.DisabledFont;
                 _disable_option_mark_animation.To = Colors.DarkMode.DisabledOptionMark;
+                
                 _disable_border_animation.To = Colors.DarkMode.DisabledBorder;
                 _disable_background_animation.To = Colors.DarkMode.DisabledBackground;
+                
                 _disable_unchecked_border_animation.To = Colors.DarkMode.DisabledUncheckedBorder;
                 _disable_unchecked_background_animation.To = Colors.DarkMode.DisabledUncheckedBackground;
             }
             else
             {
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, AccentColors.LightMode.FocusVisualAsBrush);
+
                 _idle_font_animation.To = Colors.LightMode.IdleFont;
                 _idle_option_mark_animation.To = Colors.LightMode.IdleOptionMark;
+
                 _idle_border_animation.To = AccentColors.LightMode.IdleAsBrush;
                 _idle_background_animation.To = AccentColors.LightMode.IdleAsBrush;
+
                 _idle_unchecked_border_animation.To = Colors.LightMode.IdleUncheckedBorder;
                 _idle_unchecked_background_animation.To = Colors.LightMode.IdleUncheckedBackground;
 
+                //
+
                 _mouse_over_border_animation.To = AccentColors.LightMode.MouseOverBorderAsBrush;
                 _mouse_over_background_animation.To = AccentColors.LightMode.MouseOverBackgroundAsBrush;
+
                 _mouse_over_unchecked_border_animation.To = Colors.LightMode.MouseOverUncheckedBorder;
                 _mouse_over_unchecked_background_animation.To = Colors.LightMode.MouseOverUncheckedBackground;
 
-                _mouse_down_border_animation.To = AccentColors.LightMode.MouseDownAsBrush;
+                //
+
+                _mouse_down_border_animation.To = AccentColors.LightMode.MouseDownBorderAsBrush;
                 _mouse_down_background_animation.To = AccentColors.LightMode.MouseDownAsBrush;
+
                 _mouse_down_unchecked_border_animation.To = Colors.LightMode.MouseDownUncheckedBorder;
                 _mouse_down_unchecked_background_animation.To = Colors.LightMode.MouseDownUncheckedBackground;
 
+                //
+
                 _disable_font_animation.To = Colors.LightMode.DisabledFont;
                 _disable_option_mark_animation.To = Colors.LightMode.DisabledOptionMark;
+
                 _disable_border_animation.To = Colors.LightMode.DisabledBorder;
                 _disable_background_animation.To = Colors.LightMode.DisabledBackground;
+
                 _disable_unchecked_border_animation.To = Colors.LightMode.DisabledUncheckedBorder;
                 _disable_unchecked_background_animation.To = Colors.LightMode.DisabledUncheckedBackground;
             }
+
+            ControlTemplate focusVisualControlTemplate = new(typeof(Control));
+            focusVisualControlTemplate.VisualTree = focusVisualFrameworkElementFactory;
+            Style style = new();
+            style.Setters.Add(new Setter(Control.TemplateProperty, focusVisualControlTemplate));
+            FocusVisualStyle = style;
 
             if (IsInitialized)
             {
@@ -469,7 +637,62 @@ namespace FluentUI
 
         private void AnimateToNewState()
         {
+            if (_isEnabled)
+            {
+                _idle_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+                _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _idle_font_animation);
 
+                _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+                _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
+
+                if (_isChecked)
+                {
+                    _idle_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                    _visualOptionMark.BeginAnimation(Path.FillProperty, _idle_option_mark_animation);
+
+                    _idle_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                    _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_border_animation);
+
+                    _idle_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                    _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_background_animation);
+                }
+                else
+                {
+                    _idle_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                    _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_border_animation);
+
+                    _idle_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                    _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _idle_unchecked_background_animation);
+                }
+            }
+            else
+            {
+                _disable_font_animation.From = (SolidColorBrush)_textBlock.Foreground;
+                _textBlock.BeginAnimation(TextBlock.ForegroundProperty, _disable_font_animation);
+
+                _idle_option_mark_opacity_animation.From = _visualOptionMark.Opacity;
+                _visualOptionMark.BeginAnimation(Path.OpacityProperty, _idle_option_mark_opacity_animation);
+
+                if (_isChecked)
+                {
+                    _disable_option_mark_animation.From = (SolidColorBrush)_visualOptionMark.Fill;
+                    _visualOptionMark.BeginAnimation(Path.FillProperty, _disable_option_mark_animation);
+
+                    _disable_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                    _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_border_animation);
+
+                    _disable_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                    _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_background_animation);
+                }
+                else
+                {
+                    _disable_unchecked_border_animation.From = (SolidColorBrush)_checkboxBorder.Background;
+                    _checkboxBorder.BeginAnimation(Border.BackgroundProperty, _disable_unchecked_border_animation);
+
+                    _disable_unchecked_background_animation.From = (SolidColorBrush)_checkboxBackground.Background;
+                    _checkboxBackground.BeginAnimation(Border.BackgroundProperty, _disable_unchecked_background_animation);
+                }
+            }
         }
     }
 }

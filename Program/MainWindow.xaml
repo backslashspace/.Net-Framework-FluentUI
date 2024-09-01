@@ -12,37 +12,69 @@
         Height="450" Width="800"
         >
 
-    <FluentUI:Grid_WindowBackground>
+    <FluentUI:WindowBackgroundGrid>
 
         <TextBox x:Name="YEEz"
-            Margin="278,102,348,284"
+            Margin="0,102,0,0" HorizontalAlignment="Center" Width="174" Height="48" VerticalAlignment="Top"
             />
 
 
         <FluentUI:Button_Primary x:Name="PrimaryButton"
             Content="Start Progress"
-            Margin="400,0,0,0"
+            Margin="0,0,150,0"
             PreviewClick="PrimaryButton_Click"
-            VerticalAlignment="Center" HorizontalAlignment="Left"
+            VerticalAlignment="Center" HorizontalAlignment="Right"
             />
 
         <FluentUI:Button_Secondary x:Name="SecondaryButton"
             Content="Stop Progress"
             IsEnabled="True"
             PreviewClick="SecondaryButton_Click"
-            Margin="149,0,0,0"
+            Margin="150,0,0,0"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
         <CheckBox x:Name="TTTTT" IsEnabled="False" Checked="CheckBox_Checked" Margin="128,365,539,23"/>
 
-        <FluentUI:ProgressBar x:Name="RareBar"
-            Value="44"
-            IsIndeterminate="True"
-            Margin="102,321,0,0"
-            VerticalAlignment="Top" HorizontalAlignment="Left"
-            Width="550"
-            />
+        <FluentUI:BackgroundBorder
+            Margin="0,0,0,90"
+            Height="76"
+            VerticalAlignment="Bottom" HorizontalAlignment="Center"
+            Width="584">
+            <Grid>
+                <FluentUI:ProgressBar x:Name="RareBar"
+                    Value="44"
+                    IsIndeterminate="True"
+                    Margin="0,48,0,0"
+                    VerticalAlignment="Top" HorizontalAlignment="Center"
+                    Width="550"/>
+
+                <FluentUI:ProgressBar x:Name="d"
+                    Value="44"
+                    IsIndeterminate="True"
+                    Margin="0,24,0,0"
+                    VerticalAlignment="Top" HorizontalAlignment="Center"
+                    Width="550" Height="5"/>
+            </Grid>
+        </FluentUI:BackgroundBorder>
+
+        <FluentUI:BackgroundBorder
+            Margin="226,0,0,23"
+            Height="42"
+            CornerRadius="2,0,5,15"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Left"
+            Width="140">
+
+        </FluentUI:BackgroundBorder>
+
+
+
+
+
+
+
+
 
         <ToggleButton
             HorizontalAlignment="Right"
@@ -53,10 +85,6 @@
             Checked="ToggleButton_Checked"
             Unchecked="ToggleButton_UnChecked"/>
 
-        <Border Margin="0,0,114,154" Background="#a914ff" CornerRadius="5" BorderThickness="0,0,0,1" BorderBrush="#610099" HorizontalAlignment="Right" Width="116" Height="30" VerticalAlignment="Bottom">
-            <Border Margin="1,1,1,0" CornerRadius="4" Background="#a200ff"/>
-        </Border>
-
 
 
         <FluentUI:TextBlock
@@ -65,12 +93,16 @@
             UseGrayScaleRender="False"
             Margin="523,126,67,267"/>
 
-        <FluentUI:Checkbox
-            Content="|Dgß"
+        <FluentUI:Checkbox x:Name="TESTTSSS"
+            OptionMark="Checkmark"
+            Checked="TESTTSSS_Checked"
+            Unchecked="TESTTSSS_Unchecked"
+            DecoupledEvents="True"
+            Content="|Dgßefefeffewfwresfewrfgergfregregregreg"
             IsChecked="True"
             IsEnabled="True"
-            Margin="0,0,136,36" HorizontalAlignment="Right" Width="77" Height="20" VerticalAlignment="Bottom"
+            Margin="0,0,67,36" HorizontalAlignment="Right" Width="146" Height="20" VerticalAlignment="Bottom"
             />
 
-    </FluentUI:Grid_WindowBackground>
+    </FluentUI:WindowBackgroundGrid>
 </Window>

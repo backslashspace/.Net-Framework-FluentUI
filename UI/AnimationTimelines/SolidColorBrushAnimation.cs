@@ -2,6 +2,7 @@
 using System.Windows.Media.Animation;
 using System.Windows;
 using System.Windows.Media;
+using System.Diagnostics;
 
 namespace FluentUI
 {
@@ -34,6 +35,20 @@ namespace FluentUI
 
         public override Object GetCurrentValue(Object defaultOriginValue, Object defaultDestinationValue, AnimationClock animationClock)
         {
+#if DEBUG
+            if (From == null)
+            {
+                Debug.WriteLine("SolidColorBrushAnimation => From was null");
+                return Brushes.Red;
+            }
+
+            if (To == null)
+            {
+                Debug.WriteLine("SolidColorBrushAnimation => To was null");
+                return Brushes.Red;
+            }     
+#endif
+
             Double currentProgress = animationClock.CurrentProgress.GetValueOrDefault();
             Double currentProgress_Inverted = (currentProgress - 1) * -1;
 

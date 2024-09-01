@@ -41,6 +41,10 @@ namespace FluentUI
             }
         }
 
+        new internal Boolean IsInitialized { get; private set; } = false;
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
         #region Definitions
         private readonly Border _buttonBackground = new();
         private readonly TextBlock _textBlock = new(false);
@@ -50,8 +54,6 @@ namespace FluentUI
         internal delegate void PreviewClickHandler();
         internal event PreviewClickHandler PreviewClick;
         #endregion
-
-        new internal Boolean IsInitialized { get; private set; } = false;
 
         public Button_Secondary()
         {
@@ -293,8 +295,6 @@ namespace FluentUI
         {
             internal static class DarkMode
             {
-                internal static readonly SolidColorBrush FocusVisual = Brushes.White;
-
                 internal static readonly SolidColorBrush IdleFont = Brushes.White;
                 internal static readonly SolidColorBrush IdleBorder = new(Color.FromRgb(0x30, 0x30, 0x30));
                 internal static readonly SolidColorBrush IdleBorderSpecial = new(Color.FromRgb(0x35, 0x35, 0x35));
@@ -315,8 +315,6 @@ namespace FluentUI
 
             internal static class LightMode
             {
-                internal static readonly SolidColorBrush FocusVisual = new(Color.FromRgb(0x1a, 0x1a, 0x1a));
-
                 internal static readonly SolidColorBrush IdleFont = new(Color.FromRgb(0x1b, 0x1b, 0x1b));
                 internal static readonly SolidColorBrush IdleBorder = new(Color.FromRgb(0xe5, 0xe5, 0xe5));
                 internal static readonly SolidColorBrush IdleBorderSpecial = new(Color.FromRgb(0xcc, 0xcc, 0xcc));
@@ -345,7 +343,7 @@ namespace FluentUI
 
             if (Theme.IsDarkMode)
             {
-                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, Colors.DarkMode.FocusVisual);
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, AccentColors.DarkMode.FocusVisualAsBrush);
 
                 BorderThickness = new(0d, 1d, 0d, 0d);
                 _buttonBackground.Margin = new(1d, 0d, 1d, 1d);
@@ -369,7 +367,7 @@ namespace FluentUI
             }
             else
             {
-                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, Colors.LightMode.FocusVisual);
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, AccentColors.LightMode.FocusVisualAsBrush);
 
                 BorderThickness = new(0d, 0d, 0d, 1d);
                 _buttonBackground.Margin = new(1d, 1d, 1d, 0d);

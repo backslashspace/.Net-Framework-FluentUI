@@ -20,16 +20,14 @@ namespace FluentUI_Framework
 
         }
 
-        private void Theme_Changed()
-        {
-            Theme.UpdateNonClientArea(this);
-        }
+        private void Theme_Changed() => Theme.UpdateNonClientArea(this);
 
         // ############################################################################
 
         private void PrimaryButton_Click()
         {
-            RareBar.IsIndeterminate = RareBar.IsIndeterminate ? false : true;
+            RareBar.IsIndeterminate = !RareBar.IsIndeterminate;
+            TESTTSSS.IsEnabled = !TESTTSSS.IsEnabled;
         }
 
         private void SecondaryButton_Click()
@@ -40,6 +38,8 @@ namespace FluentUI_Framework
             }
 
             TTTTT.IsChecked = true;
+
+            TESTTSSS.IsChecked = !TESTTSSS.IsChecked;
         }
 
         private void CheckBox_Checked(Object sender, RoutedEventArgs e)
@@ -57,6 +57,16 @@ namespace FluentUI_Framework
         {
             SecondaryButton.IsEnabled = false;
             PrimaryButton.IsEnabled = false;
+        }
+
+        private void TESTTSSS_Checked(Checkbox sender)
+        {
+            Debug.WriteLine("checked");
+        }
+
+        private void TESTTSSS_Unchecked(Checkbox sender)
+        {
+            Debug.WriteLine("unchecked");
         }
     }
 }

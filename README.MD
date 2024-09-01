@@ -32,3 +32,12 @@ as of now it uses unsafe for some stuff, shouldn't be too hard to use it without
 	- add the initializer and wmi resource releaser
 	- hook all windows to Theme changed event
 	- add xaml namespace to xaml designer or similar
+	
+## resources (soon)
+
+[Controls for Windows apps](https://learn.microsoft.com/en-us/windows/apps/design/controls/)
+
+Controls sampled from
+
+sampled from:
+- Windows 11 Settings App

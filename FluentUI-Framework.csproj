@@ -75,7 +75,8 @@
     <Compile Include="UI\ColorProvider\RegistryWatcher.cs" />
     <Compile Include="UI\ColorProvider\Theme.cs" />
     <Compile Include="UI\Controls\Checkbox.cs" />
-    <Compile Include="UI\Controls\Grid_WindowBackground.cs" />
+    <Compile Include="UI\Controls\BackgroundBorder.cs" />
+    <Compile Include="UI\Controls\WindowBackgroundGrid.cs" />
     <Compile Include="UI\Controls\ProgressBar.cs" />
     <Compile Include="UI\Controls\TextBlock.cs" />
     <Compile Include="UI\Initialize.cs" />

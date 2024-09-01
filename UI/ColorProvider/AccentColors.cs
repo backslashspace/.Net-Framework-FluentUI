@@ -10,6 +10,8 @@ namespace FluentUI
     {
         internal static class DarkMode
         {
+            internal static readonly SolidColorBrush FocusVisualAsBrush = Brushes.White;
+
             internal static readonly Byte[] Idle = [AccentPalette[4], AccentPalette[5], AccentPalette[6]];
             internal static SolidColorBrush IdleAsBrush = new(Color.FromRgb(Idle[0], Idle[1], Idle[2]));
             internal static readonly Byte[] IdleBorder = [0x5a, 0xc7, 0xff];
@@ -26,10 +28,14 @@ namespace FluentUI
 
             internal static readonly Byte[] MouseDown = [0x42, 0xa1, 0xd2];
             internal static SolidColorBrush MouseDownAsBrush = new(Color.FromRgb(MouseDown[0], MouseDown[1], MouseDown[2]));
+            internal static readonly Byte[] MouseDownBorder = [0x47, 0xb0, 0xe6];
+            internal static SolidColorBrush MouseDownBorderAsBrush = new(Color.FromRgb(MouseDownBorder[0], MouseDownBorder[1], MouseDownBorder[2]));
         }
 
         internal static class LightMode
         {
+            internal static readonly SolidColorBrush FocusVisualAsBrush = new(Color.FromRgb(0x1a, 0x1a, 0x1a));
+
             internal static readonly Byte[] Idle = [AccentPalette[16], AccentPalette[17], AccentPalette[18]];
             internal static SolidColorBrush IdleAsBrush = new(Color.FromRgb(Idle[0], Idle[1], Idle[2]));
             internal static readonly Byte[] IdleBorder = [0x14, 0x73, 0xc5];
@@ -46,6 +52,8 @@ namespace FluentUI
 
             internal static readonly Byte[] MouseDown = [0x31, 0x83, 0xca];
             internal static SolidColorBrush MouseDownAsBrush = new(Color.FromRgb(MouseDown[0], MouseDown[1], MouseDown[2]));
+            internal static readonly Byte[] MouseDownBorder = [0x1e, 0x78, 0xc6];
+            internal static SolidColorBrush MouseDownBorderAsBrush = new(Color.FromRgb(MouseDownBorder[0], MouseDownBorder[1], MouseDownBorder[2]));
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -111,6 +119,12 @@ namespace FluentUI
             DarkMode.MouseDown[1] = (Byte)(((DarkMode.Idle[1] + 7.24741d) * 0.8000128002048033d) + MAGIC_NUMBER - MAGIC_NUMBER);
             DarkMode.MouseDown[2] = (Byte)(((DarkMode.Idle[2] + 7.24741d) * 0.8000128002048033d) + MAGIC_NUMBER - MAGIC_NUMBER);
             DarkMode.MouseDownAsBrush = new(Color.FromRgb(DarkMode.MouseDown[0], DarkMode.MouseDown[1], DarkMode.MouseDown[2]));
+
+            // y = 1.13329x − 5.26112
+            DarkMode.MouseDownBorder[0] = (Byte)(((DarkMode.Idle[0] + 5.26112d) * 0.8823866794906864d) + MAGIC_NUMBER - MAGIC_NUMBER);
+            DarkMode.MouseDownBorder[1] = (Byte)(((DarkMode.Idle[1] + 5.26112d) * 0.8823866794906864d) + MAGIC_NUMBER - MAGIC_NUMBER);
+            DarkMode.MouseDownBorder[2] = (Byte)(((DarkMode.Idle[2] + 5.26112d) * 0.8823866794906864d) + MAGIC_NUMBER - MAGIC_NUMBER);
+            DarkMode.MouseDownBorderAsBrush = new(Color.FromRgb(DarkMode.MouseDownBorder[0], DarkMode.MouseDownBorder[1], DarkMode.MouseDownBorder[2]));
             #endregion
 
             #region LightMode
@@ -154,6 +168,12 @@ namespace FluentUI
             LightMode.MouseDown[1] = (Byte)(((LightMode.Idle[1] + 60.9964d) * 0.8000128002048033d) + MAGIC_NUMBER - MAGIC_NUMBER);
             LightMode.MouseDown[2] = (Byte)(((LightMode.Idle[2] + 60.9964d) * 0.8000128002048033d) + MAGIC_NUMBER - MAGIC_NUMBER);
             LightMode.MouseDownAsBrush = new(Color.FromRgb(LightMode.MouseDown[0], LightMode.MouseDown[1], LightMode.MouseDown[2]));
+
+            // y = 1.13329x − 33.5933
+            LightMode.MouseDownBorder[0] = (Byte)(((LightMode.Idle[0] + 33.5933d) * 0.8823866794906864d) + MAGIC_NUMBER - MAGIC_NUMBER);
+            LightMode.MouseDownBorder[1] = (Byte)(((LightMode.Idle[1] + 33.5933d) * 0.8823866794906864d) + MAGIC_NUMBER - MAGIC_NUMBER);
+            LightMode.MouseDownBorder[2] = (Byte)(((LightMode.Idle[2] + 33.5933d) * 0.8823866794906864d) + MAGIC_NUMBER - MAGIC_NUMBER);
+            LightMode.MouseDownBorderAsBrush = new(Color.FromRgb(LightMode.MouseDownBorder[0], LightMode.MouseDownBorder[1], LightMode.MouseDownBorder[2]));
             #endregion
         }
     }

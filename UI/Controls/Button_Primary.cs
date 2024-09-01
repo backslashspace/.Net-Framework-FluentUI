@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 #pragma warning disable IDE0079
 #pragma warning disable CS8618
@@ -43,6 +42,8 @@ namespace FluentUI
         }
 
         new internal Boolean IsInitialized { get; private set; } = false;
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         #region Definitions
         private readonly Border _buttonBackground = new();
@@ -312,8 +313,6 @@ namespace FluentUI
 
             internal static class LightMode
             {
-                internal static readonly SolidColorBrush FocusVisual = new(Color.FromRgb(0x1a, 0x1a, 0x1a));
-
                 internal static readonly SolidColorBrush MouseDownFontColor = new(Color.FromRgb(0xeb, 0xeb, 0xeb));
 
                 internal static readonly SolidColorBrush DisabledBorderBackground = new(Color.FromRgb(0xbf, 0xbf, 0xbf));
@@ -322,14 +321,14 @@ namespace FluentUI
 
         private void ColorProviderChanged()
         {
-            FrameworkElementFactory focusVisual_FrameworkElementFactory = new(typeof(Border));
-            focusVisual_FrameworkElementFactory.SetValue(Border.BorderThicknessProperty, new Thickness(2d));
-            focusVisual_FrameworkElementFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(-3d));
-            focusVisual_FrameworkElementFactory.SetValue(Border.CornerRadiusProperty, new CornerRadius(7.5d));
+            FrameworkElementFactory focusVisualFrameworkElementFactory = new(typeof(Border));
+            focusVisualFrameworkElementFactory.SetValue(Border.BorderThicknessProperty, new Thickness(2d));
+            focusVisualFrameworkElementFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(-3d));
+            focusVisualFrameworkElementFactory.SetValue(Border.CornerRadiusProperty, new CornerRadius(7.5d));
 
             if (Theme.IsDarkMode)
             {
-                focusVisual_FrameworkElementFactory.SetValue(Border.BorderBrushProperty, Brushes.White);
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, AccentColors.DarkMode.FocusVisualAsBrush);
 
                 _idle_font_animation.To = Brushes.Black;
                 _idle_border_bottom_animation.To = AccentColors.DarkMode.IdleBorderBottomAsBrush;
@@ -352,7 +351,7 @@ namespace FluentUI
             }
             else
             {
-                focusVisual_FrameworkElementFactory.SetValue(Border.BorderBrushProperty, Colors.LightMode.FocusVisual);
+                focusVisualFrameworkElementFactory.SetValue(Border.BorderBrushProperty, AccentColors.LightMode.FocusVisualAsBrush);
 
                 _idle_font_animation.To = Brushes.White;
                 _idle_border_animation.To = AccentColors.LightMode.IdleBorderAsBrush;
@@ -375,7 +374,7 @@ namespace FluentUI
             }
 
             ControlTemplate focusVisualControlTemplate = new(typeof(Control));
-            focusVisualControlTemplate.VisualTree = focusVisual_FrameworkElementFactory;
+            focusVisualControlTemplate.VisualTree = focusVisualFrameworkElementFactory;
             Style style = new();
             style.Setters.Add(new Setter(Control.TemplateProperty, focusVisualControlTemplate));
             FocusVisualStyle = style;

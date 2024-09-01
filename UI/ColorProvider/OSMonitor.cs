@@ -33,7 +33,8 @@ namespace FluentUI
 
             _registryAccentWatcher = new RegistryWatcher(@"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent", "AccentPalette", UpdateAccentColor);
 
-            Trace.Assert(_registryAccentWatcher.SuccessfullySubscribed, "Unable to start RegistryWatcher (accent color updater)\n\nran out of wmi space?ran out of wmi space? It is safe to continue, accent colors just won't dynamically update in runtime");
+            // todo: replace trace with actual message box (window does not spawn)
+            //Trace.Assert(_registryAccentWatcher.SuccessfullySubscribed, "Unable to start RegistryWatcher (accent color updater)\n\nran out of wmi space? It is safe to continue, accent colors just won't dynamically update in runtime");
         }
 
         private static void UpdateAccentColor(Object sender, EventArrivedEventArgs e)
@@ -84,7 +85,8 @@ namespace FluentUI
 
             _registryThemeWatcher = new RegistryWatcher(@"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", UpdateTheme);
 
-            Trace.Assert(_registryThemeWatcher.SuccessfullySubscribed, "Unable to start RegistryWatcher (theme color updater)\n\nran out of wmi space? It is safe to continue, the theme just won't dynamically update in runtime");
+            // todo: replace trace with actual message box (window does not spawn)
+            //Trace.Assert(_registryThemeWatcher.SuccessfullySubscribed, "Unable to start RegistryWatcher (theme color updater)\n\nran out of wmi space? It is safe to continue, the theme just won't dynamically update in runtime");
         }
 
         private static void UpdateTheme(Object sender, EventArrivedEventArgs e)
