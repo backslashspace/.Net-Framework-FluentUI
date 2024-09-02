@@ -76,6 +76,7 @@
     <Compile Include="UI\ColorProvider\Theme.cs" />
     <Compile Include="UI\Controls\Checkbox.cs" />
     <Compile Include="UI\Controls\BackgroundBorder.cs" />
+    <Compile Include="UI\Controls\ToggleButton.cs" />
     <Compile Include="UI\Controls\WindowBackgroundGrid.cs" />
     <Compile Include="UI\Controls\ProgressBar.cs" />
     <Compile Include="UI\Controls\TextBlock.cs" />

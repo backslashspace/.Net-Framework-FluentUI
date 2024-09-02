@@ -34,8 +34,6 @@
             VerticalAlignment="Center" HorizontalAlignment="Left"
             />
 
-        <CheckBox x:Name="TTTTT" IsEnabled="False" Checked="CheckBox_Checked" Margin="128,365,539,23"/>
-
         <FluentUI:BackgroundBorder
             Margin="0,0,0,90"
             Height="76"
@@ -59,21 +57,21 @@
         </FluentUI:BackgroundBorder>
 
         <FluentUI:BackgroundBorder
-            Margin="226,0,0,23"
-            Height="42"
+            Margin="72,0,0,10"
+            Height="75"
             CornerRadius="2,0,5,15"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Left"
-            Width="140">
+            Width="432">
+
+
 
         </FluentUI:BackgroundBorder>
 
 
-
-
-
-
-
+        <FluentUI:ToggleButton Margin="63,63,0,0"
+                               VerticalAlignment="Top"
+                               HorizontalAlignment="Left"/>
 
 
         <ToggleButton

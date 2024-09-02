@@ -37,7 +37,6 @@ namespace FluentUI_Framework
                 RareBar.Value = eee;
             }
 
-            TTTTT.IsChecked = true;
 
             TESTTSSS.IsChecked = !TESTTSSS.IsChecked;
         }
