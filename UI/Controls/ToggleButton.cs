@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection.Emit;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 namespace FluentUI
@@ -13,8 +17,7 @@ namespace FluentUI
         private readonly Canvas _canvas = new();
         private readonly Ellipse _indicator = new();
 
-        private Point _offset;
-        private Ellipse _dragObject = null;
+        
 
         public ToggleButton()
         {
@@ -46,31 +49,78 @@ namespace FluentUI
 
         }
 
+        private Boolean _isInDragMode = false;
+        private Boolean _mouseMoved = false;
+
+
+        #region ManualMouseMove
+        private Point _offset;
+
         private void IndicatorMouseDown(Object sender, MouseButtonEventArgs e)
         {
-            _dragObject = sender as Ellipse;
+            _isInDragMode = true;
 
             _offset = e.GetPosition(_canvas);
-            _offset.Y -= Canvas.GetTop(_dragObject);
-            _offset.X -= Canvas.GetLeft(_dragObject);
+            _offset.Y -= Canvas.GetTop(_indicator);
+            _offset.X -= Canvas.GetLeft(_indicator);
 
             _canvas.CaptureMouse();
         }
 
         private void CanvasMouseMove(Object sender, MouseEventArgs e)
         {
-            if (_dragObject == null) return;
+            if (!_isInDragMode) return;
 
-            Point position = e.GetPosition(sender as IInputElement);
+            _mouseMoved = true;
 
-            Canvas.SetTop(_dragObject, position.Y - _offset.Y);
-            Canvas.SetLeft(_dragObject, position.X - _offset.X);
+            _indicator.BeginAnimation(Canvas.LeftProperty, null);
+
+            Double positionOnX = e.GetPosition(sender as IInputElement).X - _offset.X;
+
+            if (positionOnX < 3) Canvas.SetLeft(_indicator, 3);
+            else if (positionOnX > 23) Canvas.SetLeft(_indicator, 23);
+            else Canvas.SetLeft(_indicator, positionOnX);
         }
+
+        private readonly DoubleAnimation manualIndicatorAnimation = new() { Duration = UI.LongAnimationDuration, DecelerationRatio = 1, FillBehavior = FillBehavior.HoldEnd };
 
         private void CanvasMouseUp(Object sender, MouseButtonEventArgs e)
         {
-            _dragObject = null;
+            Double positionOnX = Canvas.GetLeft(_indicator);
+            if (!_mouseMoved)
+            {
+
+
+                if (positionOnX < 13) Canvas.SetLeft(_indicator, 23);
+                else Canvas.SetLeft(_indicator, 3);
+                _mouseMoved = false;
+                _isInDragMode = false;
+                return;
+            }
+
+
+            _isInDragMode = false;
             _canvas.ReleaseMouseCapture();
-        }
+            _mouseMoved = false;
+            // todo: smooth clip to state
+
+
+
+
+            manualIndicatorAnimation.From = positionOnX;
+
+            if (positionOnX < 13) manualIndicatorAnimation.To = 3;
+            else manualIndicatorAnimation.To = 23;
+
+            //if (positionOnX < 13) Canvas.SetLeft(_indicator, 3);
+            //else Canvas.SetLeft(_indicator, 23);
+
+
+            _indicator.BeginAnimation(Canvas.LeftProperty, manualIndicatorAnimation);
+
+
+
+        } 
+        #endregion
     }
 }

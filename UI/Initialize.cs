@@ -53,7 +53,8 @@ namespace FluentUI
         internal static void InvokeColorProviderChanged() => ColorProviderChanged?.Invoke();
 
         internal static readonly Duration ShortAnimationDuration = new(new(0, 0, 0, 0, 24));
-        internal static readonly Duration LongAnimationDuration = new(new(0, 0, 0, 0, 48));
+        internal static readonly Duration MediumAnimationDuration = new(new(0, 0, 0, 0, 48));
+        internal static readonly Duration LongAnimationDuration = new(new(0, 0, 0, 0, 64));
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

@@ -83,7 +83,7 @@ namespace FluentUI
             }
         }
 
-        private readonly SolidColorBrushAnimation _fontColorAnimation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _fontColorAnimation = new() { Duration = UI.MediumAnimationDuration };
 
         private void UpdateTextColor()
         {

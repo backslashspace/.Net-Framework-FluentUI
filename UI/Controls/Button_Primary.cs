@@ -129,24 +129,24 @@ namespace FluentUI
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         #region Animation Definitions
-        private readonly SolidColorBrushAnimation _idle_font_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _idle_border_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _idle_border_bottom_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _idle_background_animation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _idle_font_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _idle_border_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _idle_border_bottom_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _idle_background_animation = new() { Duration = UI.MediumAnimationDuration };
 
-        private readonly SolidColorBrushAnimation _mouse_over_border_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _mouse_over_border_bottom_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _mouse_over_background_animation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _mouse_over_border_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _mouse_over_border_bottom_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _mouse_over_background_animation = new() { Duration = UI.MediumAnimationDuration };
 
         private readonly SolidColorBrushAnimation _mouse_down_font_animation = new() { Duration = UI.ShortAnimationDuration };
         private readonly SolidColorBrushAnimation _mouse_down_border_animation = new() { Duration = UI.ShortAnimationDuration };
         private readonly SolidColorBrushAnimation _mouse_down_border_bottom_animation = new() { Duration = UI.ShortAnimationDuration };
         private readonly SolidColorBrushAnimation _mouse_down_background_animation = new() { Duration = UI.ShortAnimationDuration };
 
-        private readonly SolidColorBrushAnimation _disable_font_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _disable_border_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _disable_border_bottom_animation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _disable_background_animation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _disable_font_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _disable_border_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _disable_border_bottom_animation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _disable_background_animation = new() { Duration = UI.MediumAnimationDuration };
 
         private Boolean _buttonUpPending = false;
 

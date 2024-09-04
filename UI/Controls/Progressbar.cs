@@ -144,8 +144,8 @@ namespace FluentUI
         private static readonly SolidColorBrush _darkMode_Background = new(Color.FromRgb(159, 159, 159));
         private static readonly SolidColorBrush _lightMode_Background = new(Color.FromRgb(139, 140, 137));
 
-        private readonly SolidColorBrushAnimation _foregroundAnimation = new() { Duration = UI.LongAnimationDuration };
-        private readonly SolidColorBrushAnimation _backgroundAnimation = new() { Duration = UI.LongAnimationDuration };
+        private readonly SolidColorBrushAnimation _foregroundAnimation = new() { Duration = UI.MediumAnimationDuration };
+        private readonly SolidColorBrushAnimation _backgroundAnimation = new() { Duration = UI.MediumAnimationDuration };
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
