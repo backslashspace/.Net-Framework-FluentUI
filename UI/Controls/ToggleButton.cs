@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,12 +10,6 @@ namespace FluentUI
 {
     internal class ToggleButton : Border
     {
-        private readonly Border _background = new();
-        private readonly Canvas _canvas = new();
-        private readonly Ellipse _indicator = new();
-
-        
-
         private Boolean _isEnabled = true;
         new internal Boolean IsEnabled
         {
@@ -55,14 +46,20 @@ namespace FluentUI
         new internal Boolean IsInitialized { get; private set; } = false;
 
         #region Definitions
-        internal delegate void CheckedHandler(Checkbox sender);
+        private readonly Border _background = new();
+        private readonly Canvas _canvas = new();
+        private readonly Ellipse _indicator = new();
+
+        internal delegate void CheckedHandler(ToggleButton sender);
         internal event CheckedHandler Checked;
-        internal delegate void UncheckedHandler(Checkbox sender);
+        internal delegate void UncheckedHandler(ToggleButton sender);
         internal event UncheckedHandler Unchecked;
         #endregion
 
         public ToggleButton()
         {
+            Focusable = true;
+            UseLayoutRounding = true;
             Height = 20d;
             Width = 40d;
             CornerRadius = new(10d);
@@ -76,7 +73,7 @@ namespace FluentUI
 
             _canvas.Height = 18d;
             _canvas.Width = 38d;
-            _canvas.PreviewMouseMove += CanvasMouseMove;
+            _canvas.PreviewMouseMove += MouseMoveHandler;
             _canvas.PreviewMouseUp += (s, e) => { CanvasMouseUp(); e.Handled = true; };
             _canvas.Children.Add(_indicator);
             Canvas.SetTop(_indicator, 3);
@@ -110,10 +107,33 @@ namespace FluentUI
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+        #region Animation Definitions
+
+        private readonly DoubleAnimation manualIndicatorAnimation = new() { Duration = UI.LongAnimationDuration, DecelerationRatio = 1, FillBehavior = FillBehavior.HoldEnd };
+
+        /*
+         * 
+         * 
+         * 
+         */
+
+        private Boolean _buttonUpPending = false;
+
+        private void BeginButtonDownAnimation() => throw new NotImplementedException();
+
+        private void BeginButtonUpAnimation() => throw new NotImplementedException();
+        #endregion
 
 
+        //
 
-        #region ManualMouseMove
+        #region KeyBoardHandler
+        protected override void OnPreviewKeyDown(KeyEventArgs e) => throw new NotImplementedException();
+
+        protected override void OnPreviewKeyUp(KeyEventArgs e) => throw new NotImplementedException();
+        #endregion
+
+        #region MouseHandler
         private Boolean _dragMode = false;
         private Point _offset;
         private Double _initialIndicatorPositionX;
@@ -131,7 +151,7 @@ namespace FluentUI
             _canvas.CaptureMouse();
         }
 
-        private void CanvasMouseMove(Object sender, MouseEventArgs e)
+        private void MouseMoveHandler(Object sender, MouseEventArgs e)
         {
             if (!_dragMode) return;
 
@@ -147,7 +167,7 @@ namespace FluentUI
             });
         }
 
-        private readonly DoubleAnimation manualIndicatorAnimation = new() { Duration = UI.LongAnimationDuration, DecelerationRatio = 1, FillBehavior = FillBehavior.HoldEnd };
+
 
         private void CanvasMouseUp()
         {
@@ -167,18 +187,40 @@ namespace FluentUI
             _dragMode = false;
             _canvas.ReleaseMouseCapture();
 
+            if (_isChecked) Checked?.Invoke(this);
+            else Unchecked?.Invoke(this);
+
             _indicator.BeginAnimation(Canvas.LeftProperty, manualIndicatorAnimation);
         }
+
+
+
+        private void MouseEnterHandler(Object sender, MouseEventArgs e) => throw new NotImplementedException();
+
+        private void PreviewMouseDownHandler(Object sender, MouseButtonEventArgs e) => BeginButtonDownAnimation();
+
+        private void PreviewMouseUpHandler(Object sender, MouseButtonEventArgs e) => throw new NotImplementedException();
+
+        private void MouseLeaveHandler(Object sender, MouseEventArgs e) => throw new NotImplementedException();
         #endregion
 
+        #region En/Disable
+        #endregion
 
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+        private static class Colors
+        {
+            internal static class DarkMode
+            {
 
+            }
 
+            internal static class LightMode
+            {
 
-
-
-
+            }
+        }
 
         private void ColorProviderChanged()
         {
