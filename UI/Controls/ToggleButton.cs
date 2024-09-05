@@ -19,6 +19,48 @@ namespace FluentUI
 
         
 
+        private Boolean _isEnabled = true;
+        new internal Boolean IsEnabled
+        {
+            get => _isEnabled;
+            set
+            {
+                _isEnabled = value;
+
+                if (IsEnabled)
+                {
+                    //Enable();
+                }
+                else
+                {
+                    //Disable();
+                }
+            }
+        }
+
+        private Boolean _isChecked = false;
+        internal Boolean IsChecked
+        {
+            get => _isChecked;
+            set
+            {
+                _isChecked = value;
+            }
+        }
+
+        /// <summary>Whether changes to <seealso cref="IsChecked"/> made by the backend should raise <seealso cref="Checked"/> or <seealso cref="Unchecked"/> events.</summary>
+        /// <remarks>Default = false</remarks>
+        internal Boolean DecoupledEvents { get; set; } = false;
+
+        new internal Boolean IsInitialized { get; private set; } = false;
+
+        #region Definitions
+        internal delegate void CheckedHandler(Checkbox sender);
+        internal event CheckedHandler Checked;
+        internal delegate void UncheckedHandler(Checkbox sender);
+        internal event UncheckedHandler Unchecked;
+        #endregion
+
         public ToggleButton()
         {
             Height = 20d;
@@ -35,7 +77,7 @@ namespace FluentUI
             _canvas.Height = 18d;
             _canvas.Width = 38d;
             _canvas.PreviewMouseMove += CanvasMouseMove;
-            _canvas.PreviewMouseUp += CanvasMouseUp;
+            _canvas.PreviewMouseUp += (s, e) => { CanvasMouseUp(); e.Handled = true; };
             _canvas.Children.Add(_indicator);
             Canvas.SetTop(_indicator, 3);
             Canvas.SetLeft(_indicator, 3);
@@ -45,82 +87,107 @@ namespace FluentUI
             _indicator.Width = 12;
             _indicator.PreviewMouseDown += IndicatorMouseDown;
 
+            PreviewMouseUp += (s, e) => { CanvasMouseUp(); e.Handled = true; };
 
-
+            Loaded += OnLoaded;
         }
 
-        private Boolean _isInDragMode = false;
-        private Boolean _mouseMoved = false;
+        private void OnLoaded(Object sender, RoutedEventArgs e)
+        {
+            _isEnabled = base.IsEnabled; // xaml interface not using 'overridden' IsEnabled property
+
+            /*
+             * 
+             * 
+             * 
+             * 
+             */
+
+            ColorProviderChanged();
+
+            IsInitialized = true;
+        }
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
 
 
         #region ManualMouseMove
+        private Boolean _dragMode = false;
         private Point _offset;
+        private Double _initialIndicatorPositionX;
 
         private void IndicatorMouseDown(Object sender, MouseButtonEventArgs e)
         {
-            _isInDragMode = true;
+            _dragMode = true;
+
+            _initialIndicatorPositionX = Canvas.GetLeft(_indicator);
 
             _offset = e.GetPosition(_canvas);
+            _offset.X -= _initialIndicatorPositionX;
             _offset.Y -= Canvas.GetTop(_indicator);
-            _offset.X -= Canvas.GetLeft(_indicator);
 
             _canvas.CaptureMouse();
         }
 
         private void CanvasMouseMove(Object sender, MouseEventArgs e)
         {
-            if (!_isInDragMode) return;
+            if (!_dragMode) return;
 
-            _mouseMoved = true;
-
-            _indicator.BeginAnimation(Canvas.LeftProperty, null);
+            if (_indicator.HasAnimatedProperties) _indicator.BeginAnimation(Canvas.LeftProperty, null);
 
             Double positionOnX = e.GetPosition(sender as IInputElement).X - _offset.X;
 
-            if (positionOnX < 3) Canvas.SetLeft(_indicator, 3);
-            else if (positionOnX > 23) Canvas.SetLeft(_indicator, 23);
-            else Canvas.SetLeft(_indicator, positionOnX);
+            Canvas.SetLeft(_indicator, positionOnX switch
+            {
+                < 3 => 3,
+                > 23 => 23,
+                _ => positionOnX
+            });
         }
 
         private readonly DoubleAnimation manualIndicatorAnimation = new() { Duration = UI.LongAnimationDuration, DecelerationRatio = 1, FillBehavior = FillBehavior.HoldEnd };
 
-        private void CanvasMouseUp(Object sender, MouseButtonEventArgs e)
+        private void CanvasMouseUp()
         {
             Double positionOnX = Canvas.GetLeft(_indicator);
-            if (!_mouseMoved)
+
+            if (!_dragMode || _initialIndicatorPositionX == positionOnX)
             {
-
-
-                if (positionOnX < 13) Canvas.SetLeft(_indicator, 23);
-                else Canvas.SetLeft(_indicator, 3);
-                _mouseMoved = false;
-                _isInDragMode = false;
-                return;
+                manualIndicatorAnimation.To = _isChecked ? 3 : 23;
+                _isChecked = !_isChecked;
+            }
+            else
+            {
+                manualIndicatorAnimation.To = positionOnX < 13 ? 3 : 23;
+                _isChecked = !_isChecked;
             }
 
-
-            _isInDragMode = false;
+            _dragMode = false;
             _canvas.ReleaseMouseCapture();
-            _mouseMoved = false;
-            // todo: smooth clip to state
-
-
-
-
-            manualIndicatorAnimation.From = positionOnX;
-
-            if (positionOnX < 13) manualIndicatorAnimation.To = 3;
-            else manualIndicatorAnimation.To = 23;
-
-            //if (positionOnX < 13) Canvas.SetLeft(_indicator, 3);
-            //else Canvas.SetLeft(_indicator, 23);
-
 
             _indicator.BeginAnimation(Canvas.LeftProperty, manualIndicatorAnimation);
-
-
-
-        } 
+        }
         #endregion
+
+
+
+
+
+
+
+
+
+
+        private void ColorProviderChanged()
+        {
+
+        }
+
+        private void AnimateToNewState()
+        {
+
+        }
     }
 }
